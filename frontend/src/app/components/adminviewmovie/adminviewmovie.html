@@ -1,0 +1,34 @@
+<h2>Manage Movies</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Genre</th>
+      <th>Duration (min)</th>
+      <th>Price ($)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (movie of movies; track movie.movieId) {
+      <tr>
+        <td>{{ movie.title }}</td>
+        <td>{{ movie.genre }}</td>
+        <td>{{ movie.duration }}</td>
+        <td>{{ movie.price }}</td>
+        <td style="display: flex; justify-content: space-around;">
+          <button class="btn" (click)="updateMovie(movie.movieId)">
+            Edit
+          </button>
+          <button
+            class="btn"
+            style="background-color: red;"
+            (click)="deleteMovie(movie.movieId)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

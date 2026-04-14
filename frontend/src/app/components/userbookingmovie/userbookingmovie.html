@@ -1,0 +1,64 @@
+<div class="page-bg">
+    <div class="booking-card">
+      <h1 class="title">🎬 {{ movie.title }}</h1>
+  
+     
+      <div class="form-row fancy-input">
+        <label for="seats">Enter Number of Seats</label>
+        <div class="input-wrapper">
+          <span class="icon">🎟️</span>
+          <input
+            id="seats"
+            type="number"
+            min="1"
+            (change)="updateTotalCost()"
+            placeholder="e.g., 2"
+            [(ngModel)]="seats" />
+        </div>
+      </div>
+  
+     
+      <div class="form-row fancy-input">
+        <label for="seatType">Select Seat Type</label>
+        <div class="input-wrapper">
+          <span class="icon">💺</span>
+          <select
+            id="seatType"
+            name="seatType"
+            (change)="updateTotalCost()"
+            [(ngModel)]="seatType">
+            <option value="">-- Choose Type --</option>
+            <option value="Balcony">Balcony</option>
+            <option value="Middle">Middle</option>
+            <option value="Economy">Economy</option>
+          </select>
+        </div>
+      </div>
+  
+      <!-- Preview Section -->
+      <div class="preview">
+        <div class="row">
+          <span>Seats Selected:  </span>
+          <strong>{{ seats || 0 }}</strong>
+        </div>
+        <div class="row">
+          <span>Seat Type: </span>
+          <strong>{{ seatType || 'Not Selected' }}</strong>
+        </div>
+        <div class="row total">
+          <span>Total Price (₹{{perPerson}} each): </span>
+          <strong>₹{{ totalCost}}</strong>
+        </div>
+      </div>
+  
+      <!-- Confirm Button -->
+      <button
+        class="confirm-btn"
+        [disabled]="!seats || seats < 1 || !seatType"
+        (click)="registerBooking()">
+        ✅ Confirm Booking
+      </button>
+  
+  </div>
+  </div>
+

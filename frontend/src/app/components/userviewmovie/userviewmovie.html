@@ -1,0 +1,32 @@
+<h2>Available Movies</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Duration (min)</th>
+            <th>Price ($)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+   <tbody>
+  @for (movie of movies; track movie.movieId) {
+    <tr>
+      <td>{{ movie.title }}</td>
+      <td>{{ movie.genre }}</td>
+      <td>{{ movie.duration }}</td>
+      <td>{{ movie.price }}</td>
+      <td>
+        <button
+          class="btn"
+          (click)="navigateToBooking(movie.movieId)">
+          Book Now
+        </button>
+      </td>
+    </tr>
+  }
+</tbody>
+    
+</table>
+

@@ -1,0 +1,107 @@
+<div class="form-container">
+  <h2>{{ isEditing ? 'Update Movie' : 'Add New Movie' }}</h2>
+
+  <form [formGroup]="movieForm" (ngSubmit)="addOrUpdateMovie()">
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">
+        Movie Title <span class="required">*</span>
+      </label>
+
+      <input id="title" type="text" formControlName="title" />
+
+      @if (title.touched || title.dirty) {
+        <div class="error-message">
+          @if (title.errors?.['required']) {
+            <div>Title is Required</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Genre -->
+    <div class="form-group">
+      <label for="genre">
+        Genre <span class="required">*</span>
+      </label>
+
+      <input id="genre" type="text" formControlName="genre" />
+
+      @if (genre.touched || genre.dirty) {
+        <div class="error-message">
+          @if (genre.errors?.['required']) {
+            <div>Genre is Required</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Duration -->
+    <div class="form-group">
+      <label for="duration">
+        Duration <span class="required">*</span>
+      </label>
+
+      <input id="duration" type="number" formControlName="duration" />
+
+      @if (duration.touched || duration.dirty) {
+        <div class="error-message">
+          @if (duration.errors?.['required']) {
+            <div>Duration is Required</div>
+          }
+          @if (duration.errors?.['min']) {
+            <div>Duration cannot be zero or negative</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Price -->
+    <div class="form-group">
+      <label for="price">
+        Price ($): <span class="required">*</span>
+      </label>
+
+      <input id="price" type="number" formControlName="price" />
+
+      @if (price.touched || price.dirty) {
+        <div class="error-message">
+          @if (price.errors?.['required']) {
+            <div>Price is Required</div>
+          }
+          @if (price.errors?.['min']) {
+            <div>Price cannot be zero or negative</div>
+          }
+        </div>
+      }
+    </div>
+
+    <button type="submit" class="btn" [disabled]="movieForm.invalid">
+      {{ isEditing ? 'Update Movie' : 'Add Movie' }}
+    </button>
+  </form>
+</div>
+
+<!-- Modal -->
+@if (showModal) {
+  <div class="modal-backdrop">
+    <div class="modal-content">
+
+      <button class="close-btn" (click)="closeModal()">✖</button>
+
+      <h2>{{ modalMessage }}</h2>
+
+      <div class="movie-details">
+        <p><strong>Title:</strong> {{ movie?.title }}</p>
+        <p><strong>Genre:</strong> {{ movie?.genre }}</p>
+        <p><strong>Duration:</strong> {{ movie?.duration }} minutes</p>
+        <p><strong>Price:</strong> ${{ movie?.price }}</p>
+      </div>
+
+      <button class="btn" (click)="navigateToMovies()">
+        View Movies
+      </button>
+    </div>
+  </div>
+}

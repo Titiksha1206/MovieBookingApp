@@ -1,0 +1,122 @@
+<div class="form-container">
+  <h2>Registration</h2>
+
+  <form [formGroup]="form" (ngSubmit)="register()">
+
+    <!-- Username -->
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" formControlName="username" />
+
+      @if (username.touched && username.invalid) {
+        <div class="error-message">
+          @if (username.errors?.['required']) {
+            <span>Username is required</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" formControlName="email" />
+
+      @if (email.touched && email.invalid) {
+        <div class="error-message">
+          @if (email.errors?.['required']) {
+            <div>Email is required</div>
+          }
+          @if (email.errors?.['email']) {
+            <div>Email is invalid</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" formControlName="password" />
+
+      @if (password.touched && password.invalid) {
+        <div class="error-message">
+          @if (password.errors?.['required']) {
+            <span>Password is required</span>
+          }
+          @if (password.errors?.['minlength']) {
+            <div>Password length should be minimum 6</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+      />
+
+      @if (confirmPassword.touched && confirmPassword.invalid) {
+        <div class="error-message">
+          @if (confirmPassword.errors?.['required']) {
+            <div>Confirm Password is required</div>
+          }
+        </div>
+      }
+
+      @if (confirmPassword.errors?.['mismatch']) {
+        <div class="error-message">
+          Confirm Password and Password do not match
+        </div>
+      }
+    </div>
+
+    <!-- Mobile Number -->
+    <div class="form-group">
+      <label for="mobileNumber">Mobile Number</label>
+      <input
+        type="text"
+        id="mobileNumber"
+        formControlName="mobileNumber"
+      />
+
+      @if (mobileNumber.touched && mobileNumber.invalid) {
+        <div class="error-message">
+          @if (mobileNumber.errors?.['required']) {
+            <div>Mobile Number is required</div>
+          }
+          @if (mobileNumber.errors?.['pattern']) {
+            <div>Mobile Number is invalid (exactly 10 digits)</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Role -->
+    <div class="form-group">
+      <label for="role">Role</label>
+      <select id="role" formControlName="userRole">
+        <option value="">Select a role</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="CUSTOMER">CUSTOMER</option>
+      </select>
+
+      @if (role.touched && role.invalid) {
+        <div class="error-message">
+          @if (role.errors?.['required']) {
+            <div>Role is required</div>
+          }
+        </div>
+      }
+    </div>
+
+    <button class="btn" type="submit" [disabled]="form.invalid">
+      Register
+    </button>
+
+  </form>
+</div>

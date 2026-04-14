@@ -1,0 +1,33 @@
+<h2>Your Bookings</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Movie Title</th>
+      <th>Genre</th>
+      <th>Duration (min)</th>
+      <th>Seats Booked</th>
+      <th>Total Cost ($)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (booking of bookings; track booking.bookingId) {
+      <tr>
+        <td>{{ booking.movie.title }}</td>
+        <td>{{ booking.movie.genre }}</td>
+        <td>{{ booking.movie.duration }}</td>
+        <td>{{ booking.seatCount }}</td>
+        <td>{{ booking.totalCost }}</td>
+        <td>
+          <button
+            class="btn"
+            (click)="cancleBooking(booking.bookingId)">
+            Cancel Ticket
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

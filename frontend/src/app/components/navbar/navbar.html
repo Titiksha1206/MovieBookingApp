@@ -1,0 +1,33 @@
+<div class="navbar">
+  <div class="company">
+    BOOK MYSHOW
+  </div>
+
+  <div class="navigation">
+
+    @if (isLoggedIn) {
+      <div class="user-details">
+        {{ userName }} / {{ userRole }}
+      </div>
+    }
+
+    @if (!isLoggedIn) {
+      <div class="nav-links">
+        <a routerLink="/register">Register</a>
+        <a routerLink="/login">Login</a>
+      </div>
+    } @else {
+
+      @if (userRole === 'ADMIN') {
+        <app-adminnav></app-adminnav>
+      } @else {
+        <app-usernav></app-usernav>
+      }
+
+      <button class="logout-button" (click)="logout()">
+        Logout
+      </button>
+    }
+
+  </div>
+</div>

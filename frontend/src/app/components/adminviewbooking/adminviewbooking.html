@@ -1,0 +1,26 @@
+<h2>All Bookings</h2>
+<table>
+  <thead>
+    <tr>
+      <th>UserName</th>
+      <th>Movie Title</th>
+      <th>Genre</th>
+      <th>Duration (min)</th>
+      <th>Seats Booked</th>
+      <th>Total Cost ($)</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (booking of bookings; track booking.bookingId) {
+      <tr>
+        <td>{{ booking.user.username }}</td>
+        <td>{{ booking.movie.title }}</td>
+        <td>{{ booking.movie.genre }}</td>
+        <td>{{ booking.movie.duration }}</td>
+        <td>{{ booking.seatCount }}</td>
+        <td>{{ booking.totalCost }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
