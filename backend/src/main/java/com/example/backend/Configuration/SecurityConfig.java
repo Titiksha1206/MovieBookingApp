@@ -28,8 +28,7 @@ public class SecurityConfig {
 
 @Bean
 AuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setUserDetailsService(userDetailsService);
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
     provider.setPasswordEncoder(new BCryptPasswordEncoder());
     return provider;
 }
@@ -38,14 +37,12 @@ AuthenticationProvider authenticationProvider() {
 SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
       return http.csrf( csrf -> csrf.disable())
                  .cors(cors -> cors.disable())
-                 .authorizeHttpRequests()
-                 .anyRequest().permitAll()
-                 .and()
-                 .sessionManagement()
-                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                 .and()
+                 .authorizeHttpRequests(auth -> auth
+                 .anyRequest().permitAll())
+                 .sessionManagement(session -> session
+                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                  .httpBasic(Customizer.withDefaults())
-                 .formLogin().disable()
+                 .formLogin(form -> form.disable())
                  .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                  .build();
 } 
