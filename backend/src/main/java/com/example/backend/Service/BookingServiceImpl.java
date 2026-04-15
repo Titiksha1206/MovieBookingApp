@@ -2,7 +2,6 @@ package com.example.backend.Service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.Entity.Booking;
@@ -13,55 +12,81 @@ import com.example.backend.Repository.BookingRepo;
 import com.example.backend.Repository.MovieRepo;
 import com.example.backend.Repository.UserRepo;
 
+// ✅ @Service: Indicates that this class is a service component in the Spring context.
+// 👉 Marks this as service layer (business logic)
+// 👉 Spring will manage it as a bean
 @Service
 public class BookingServiceImpl implements BookingService {
-     @Autowired
-     BookingRepo bookingRepo;
-     @Autowired
-     MovieRepo movieRepo;
-    @Autowired
-    UserRepo userRepo;
+    
+    private final BookingRepo bookingRepo;
+    private final MovieRepo movieRepo;
+    private final UserRepo userRepo;
+
+    public BookingServiceImpl(BookingRepo bookingRepo, MovieRepo movieRepo, UserRepo userRepo){
+        this.bookingRepo = bookingRepo;
+        this.movieRepo = movieRepo;
+        this.userRepo = userRepo;
+    }
 
     @Override
-    public Booking createBooking(Booking booking, long movieId,int userId) {
-        Movie movie = null;
-        User user = null;
+    public Booking createBooking(Booking booking, long movieId,int userId){
+        Movie movie = movieRepo.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found"));
 
-        if(userRepo.existsById(userId) && movieRepo.existsById(movieId))
-        {
-             user = userRepo.findById(userId).orElse(null);
-             movie = movieRepo.findById(movieId).orElse(null);
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if(booking.getSeatCount() <= 0){
+            throw new RuntimeException("Invalid seat count");
         }
-        if(movie != null  && user != null)
-        {
-            booking.setUser(user);
-            booking.setMovie(movie);
+
+        booking.setMovie(movie);
+        booking.setUser(user);
+
+        return bookingRepo.save(booking);
+    }
+
+    @Override
+    public Booking updateBooking(long bookingId, Booking booking){
+
+        Booking existing = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking Not Found"));
+
+        if (booking.getSeatCount() <= 0) {
+            throw new RuntimeException("Invalid seat count");
         }
-       return bookingRepo.save(booking);
+
+        existing.setSeatCount(booking.getSeatCount());
+        existing.setTotalCost(booking.getTotalCost());
+
+        return bookingRepo.save(existing);
     }
+
     @Override
-    public Booking updateBooking(long bookingId, Booking booking) {
-         booking.setBookingId(bookingId);
-         return bookingRepo.save(booking);
-    }
-    @Override
-    public Booking getBookingById(long bookingId) throws BookingNotFoundException {
+    public Booking getBookingById(long bookingId){
         return bookingRepo.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Booking Not Found"));
     }
 
     @Override
-    public List<Booking> getAllBookings() {
+    public List<Booking> getAllBookings(){
         return bookingRepo.findAll();
     }
 
     @Override
-    public boolean deleteBooking(long bookingId) throws BookingNotFoundException {
-       if(!bookingRepo.existsById(bookingId)) throw new BookingNotFoundException("Booking Not Found");
-       bookingRepo.deleteById(bookingId);
-       return true;
+    public void deleteBooking(long bookingId){
+      if (!bookingRepo.existsById(bookingId)) {
+        throw new BookingNotFoundException("Booking Not Found");
     }
+
+        bookingRepo.deleteById(bookingId);
+    }
+    
     @Override
-    public List<Booking> findBookingsByUser(int userId) {
+    public List<Booking> findBookingsByUser(int userId){
+        if (!userRepo.existsById(userId)){
+            throw new RuntimeException("User not found");
+        }
+
         return bookingRepo.findBookingsByUser(userId);
     }
 }

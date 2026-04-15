@@ -2,7 +2,6 @@ package com.example.backend.Service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,44 +10,55 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.Configuration.UserPrinciple;
 import com.example.backend.Entity.User;
+import com.example.backend.Exception.UserNotFoundException;
 import com.example.backend.Repository.UserRepo;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
-     @Autowired
-    UserRepo userRepo;
 
-    @Override
-    public User registerUser(User user) {
-       user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-       return userRepo.save(user);
-    }
+   UserRepo userRepo;
 
-    @Override
-    public List<User> getAllUser() {
-       return userRepo.findAll();
-    }
+   public UserServiceImpl(UserRepo userRepo) {
+      this.userRepo = userRepo;
+   }
 
-    @Override
-    public User loginUser(User user) {
-       return userRepo.findById(user.getUserId()).orElse(null);
-    }
+   @Override
+   public User registerUser(User user) {
+      if(userRepo.findByUsername(user.getUsername()) != null){
+         throw new RuntimeException("Username already exists");
+      }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-      
-        User user = userRepo.findByUsername(username);
+      user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+      return userRepo.save(user);
+   }
 
-        if(user == null) throw new UsernameNotFoundException("Not Found");
+   @Override
+   public List<User> getAllUser() {
+      return userRepo.findAll();
+   }
 
-        return new UserPrinciple(user);
-    }
+   // @Override
+   // public User loginUser(User user) {
+   //    return userRepo.findById(user.getUserId()).orElse(null);
+   // }
 
-    @Override
-    public User findByUsername(String username) {
-      return userRepo.findByUsername(username);
-    }
+   @Override
+   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+   
+      User user = userRepo.findByUsername(username);
 
+      if(user == null) throw new UsernameNotFoundException("User not found with username: " + username);
 
+      return new UserPrinciple(user);
+   }
 
+   @Override
+   public User findByUsername(String username) {
+   User user = userRepo.findByUsername(username);
+
+      if(user == null){
+         throw new UserNotFoundException("User not found with username: " + username);
+      }
+      return user;
+   }
 }

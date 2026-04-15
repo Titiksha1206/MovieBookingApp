@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Entity.Booking;
-import com.example.backend.Exception.BookingNotFoundException;
 import com.example.backend.Service.BookingService;
 import com.example.backend.Service.MovieService;
 
@@ -42,23 +41,23 @@ public class BookingController {
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<Booking> updateBooking(@PathVariable long bookingId, @RequestBody Booking booking) {
+    public ResponseEntity<Booking> updateBooking(@PathVariable long bookingId, @RequestBody Booking booking){
         return ResponseEntity.status(200).body(bookingService.updateBooking(bookingId, booking));
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable long bookingId) throws BookingNotFoundException{
+    public ResponseEntity<Booking> getBookingById(@PathVariable long bookingId){
        return ResponseEntity.ok(bookingService.getBookingById(bookingId));
     }
 
     @GetMapping
-    public ResponseEntity<List<Booking>> getAllBookings() {
+    public ResponseEntity<List<Booking>> getAllBookings(){
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<String> deleteBookingById(@PathVariable long bookingId) throws BookingNotFoundException{
-      bookingService.deleteBooking(bookingId);
+    public ResponseEntity<String> deleteBookingById(@PathVariable long bookingId){
+        bookingService.deleteBooking(bookingId);
         return ResponseEntity.ok("Booking deleted successfully");
     }
 
