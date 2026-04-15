@@ -2,7 +2,7 @@ package com.example.backend.Entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,8 +19,6 @@ import lombok.NoArgsConstructor;
 @Data
 
 @Entity
-@JsonIgnoreProperties("bookings")
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +30,7 @@ public class User {
     private String userRole;
     
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Booking> bookings;
 
-    
 }
