@@ -10,7 +10,7 @@ public interface BookingService {
      Booking getBookingById(long bookingId) throws BookingNotFoundException;
      List<Booking> getAllBookings();
      boolean deleteBooking(long bookingId) throws BookingNotFoundException;
-     List<Booking> fingBookingsByUser(int userId);
+     List<Booking> findBookingsByUser(int userId);
      Booking updateBooking(long bookingId, Booking booking);
 
 }

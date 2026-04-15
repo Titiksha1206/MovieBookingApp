@@ -2,7 +2,6 @@ package com.example.backend.Controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import com.example.backend.Service.MovieService;
 @RestController
 @RequestMapping("/api/movie")
 public class MovieController {
-      private MovieService movieService;
+    private MovieService movieService;
 
     public MovieController(MovieService movieService){
         this.movieService = movieService;
@@ -27,20 +26,13 @@ public class MovieController {
     
     @PostMapping
     public ResponseEntity<Movie> addMovie(@RequestBody Movie movie){
-        Movie m =  movieService.addMovie(movie);
-        if(m != null)
-          return ResponseEntity.status(200).body(m);
-        else
-         return new ResponseEntity<>(HttpStatusCode.valueOf(500));
+        return ResponseEntity.status(201).body(movieService.addMovie(movie));
     }
 
     @PutMapping("/{movieId}")
     public ResponseEntity<Movie> updateMovie(@PathVariable long movieId, @RequestBody Movie movie){
-        Movie m =  movieService.updateMovie(movieId, movie);
-        if(m != null)
-          return ResponseEntity.status(200).body(m);
-        else
-         return new ResponseEntity<>(HttpStatusCode.valueOf(500));
+        return ResponseEntity.ok(movieService.updateMovie(movieId, movie)
+        );
     }
 
     @GetMapping("/{movieId}")
@@ -48,30 +40,20 @@ public class MovieController {
         
         Movie movie = movieService.getMovieById(movieId);
         if(movie != null){
-           return ResponseEntity.status(200).body(movie);
+            return ResponseEntity.ok(movie);
         }
-        else {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public ResponseEntity<List<Movie>> getAllMovies(){
-        
-        List<Movie> movies = movieService.getAllMovies();
-        if(!movies.isEmpty()){
-           return ResponseEntity.status(200).body(movies);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-        }
+        return ResponseEntity.ok(movieService.getAllMovies());
     }
 
-    
-
     @DeleteMapping("/{movieId}")
-    public ResponseEntity<Boolean> deleteMovieById(@PathVariable long movieId){
-        return ResponseEntity.status(200).body(movieService.deleteMovieById(movieId));
+    public ResponseEntity<Void> deleteMovieById(@PathVariable long movieId){
+         movieService.deleteMovieById(movieId);
+        return ResponseEntity.noContent().build();
     }
 
 }

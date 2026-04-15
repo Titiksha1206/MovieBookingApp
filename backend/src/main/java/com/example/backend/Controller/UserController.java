@@ -25,18 +25,32 @@ import com.example.backend.Service.UserService;
 @RequestMapping("/api/user")
 
 public class UserController {
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    AuthenticationManager manager;
-
-    @Autowired
-    JwtUtils jwtUtils;
-
-    @Autowired
-    UserDetailsService userDetailsService;
     
+  private final UserService userService;
+  private final AuthenticationManager manager;
+  private final JwtUtils jwtUtils;
+  private final UserDetailsService userDetailsService;
+
+    public UserController(UserService userService,
+                          AuthenticationManager manager,
+                          JwtUtils jwtUtils,
+                          UserDetailsService userDetailsService) {
+        this.userService = userService;
+        this.manager = manager;
+        this.jwtUtils = jwtUtils;
+        this.userDetailsService = userDetailsService;
+    }
+    
+ // 🔍 Flow:
+ // Client sends:
+ // {
+ //   "username": "abc",
+ //   "password": "123"
+ // }
+ // Controller receives
+ // Calls service
+ // Password encoded (BCrypt)
+ // Saved in DB
     @PostMapping("/register")
     public ResponseEntity<User> addUser(@RequestBody User user){
         return ResponseEntity.status(201).body(userService.registerUser(user));
@@ -44,18 +58,28 @@ public class UserController {
 
     @PostMapping("/login")
      public ResponseEntity<?> login(@RequestBody UserDto userDto){
-         
-        Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword())) ;
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
+        
+      // 👉 Spring internally:
+                              //fetches user
+                              //compares password (BCrypt)
+                              //throws exception if wrong
+      Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(
+        userDto.getUsername(),
+        userDto.getPassword()
+      ));
 
-        if(authentication.isAuthenticated())  {
+      // 👉 Loads user again (for token generation)
+      UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
+
+        if(authentication.isAuthenticated())  // 👉 If authentication successful, generate token and return user details
+        {
         User user = userService.findByUsername(userDto.getUsername());
         LoginAuthenticationDto data = new LoginAuthenticationDto();
         data.setToken(jwtUtils.generateToken(userDetails));
         data.setUsername(user.getUsername());
         data.setUserRole(user.getUserRole());
         data.setUserId(user.getUserId());
-          return ResponseEntity.status(200).body(data);
+        return ResponseEntity.status(200).body(data);
         }
          else
           return ResponseEntity.status(404).body("Not Found");
@@ -63,7 +87,7 @@ public class UserController {
 
 
      @GetMapping
-     public List<User> getAllUsers() {
-        return userService.getAllUser();
+     public ResponseEntity<List<User>> getAllUsers() {
+       return ResponseEntity.ok(userService.getAllUser());
      }
 }
