@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Entity.Movie;
+import com.example.backend.Entity.MovieDto;
 import com.example.backend.Service.MovieService;
 
 @RestController
@@ -25,7 +26,12 @@ public class MovieController {
     }
     
     @PostMapping
-    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie){
+    public ResponseEntity<Movie> addMovie(@RequestBody MovieDto dto){
+        Movie movie = new Movie();
+        movie.setTitle(dto.getTitle());
+        movie.setGenre(dto.getGenre());
+        movie.setDuration(dto.getDuration());
+        movie.setPrice(dto.getPrice());
         return ResponseEntity.status(201).body(movieService.addMovie(movie));
     }
 
