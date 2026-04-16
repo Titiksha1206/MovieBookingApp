@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Configuration.JwtUtils;
 import com.example.backend.Entity.LoginAuthenticationDto;
+import com.example.backend.Entity.RegisterDto;
 import com.example.backend.Entity.User;
 import com.example.backend.Entity.UserDto;
 import com.example.backend.Service.UserService;
@@ -51,8 +52,14 @@ public class UserController {
  // Password encoded (BCrypt)
  // Saved in DB
     @PostMapping("/register")
-    public ResponseEntity<User> addUser(@RequestBody User user){
-        return ResponseEntity.status(201).body(userService.registerUser(user));
+    public ResponseEntity<User> addUser(@RequestBody RegisterDto userDto){
+      User user = new User();
+      user.setUsername(userDto.getUsername());
+      user.setEmail(userDto.getEmail());
+      user.setPassword(userDto.getPassword());
+      user.setMobileNumber(userDto.getMobileNumber());
+      user.setUserRole(userDto.getUserRole());
+      return ResponseEntity.status(201).body(userService.registerUser(user));
     }
 
     @PostMapping("/login")
