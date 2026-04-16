@@ -5,9 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.Entity.Booking;
+import com.example.backend.Entity.BookingDto;
 import com.example.backend.Entity.Movie;
 import com.example.backend.Entity.User;
 import com.example.backend.Exception.BookingNotFoundException;
+import com.example.backend.Exception.InsufficientSeatCountException;
+import com.example.backend.Exception.MovieNotFoundException;
+import com.example.backend.Exception.UserNotFoundException;
 import com.example.backend.Repository.BookingRepo;
 import com.example.backend.Repository.MovieRepo;
 import com.example.backend.Repository.UserRepo;
@@ -29,17 +33,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking createBooking(Booking booking, long movieId,int userId){
+    public Booking createBooking(BookingDto bookingDto, long movieId,int userId){
         Movie movie = movieRepo.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Movie not found"));
+                .orElseThrow(() -> new MovieNotFoundException("Movie not found"));
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if(booking.getSeatCount() <= 0){
-            throw new RuntimeException("Invalid seat count");
+        if(bookingDto.getSeatCount() <= 0){
+            throw new InsufficientSeatCountException("Invalid seat count");
         }
 
+        Booking booking = new Booking();
+        booking.setSeatCount(bookingDto.getSeatCount());
+        booking.setTotalCost(bookingDto.getTotalCost());
         booking.setMovie(movie);
         booking.setUser(user);
 
@@ -53,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException("Booking Not Found"));
 
         if (booking.getSeatCount() <= 0) {
-            throw new RuntimeException("Invalid seat count");
+            throw new InsufficientSeatCountException("Invalid seat count");
         }
 
         existing.setSeatCount(booking.getSeatCount());
@@ -84,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> findBookingsByUser(int userId){
         if (!userRepo.existsById(userId)){
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         return bookingRepo.findBookingsByUser(userId);

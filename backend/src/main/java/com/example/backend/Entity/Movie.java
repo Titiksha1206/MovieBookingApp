@@ -35,6 +35,6 @@ public class Movie {
     // 👉 orphanRemoval = true → If a booking is removed from list → delete it from DB
     // 👉 JsonManagedReference -> Movie will include bookings in JSON response (parent side of relationship)
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("movie-booking")
     private List<Booking> bookings = new ArrayList<>();
 }

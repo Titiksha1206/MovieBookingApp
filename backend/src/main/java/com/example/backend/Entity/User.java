@@ -31,7 +31,7 @@ public class User {
     private String userRole;
     
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonManagedReference("user-booking")
     private List<Booking> bookings;
 
 }

@@ -26,8 +26,8 @@ public class Booking {
 // 👉 @Id → Primary key
 // 👉 @GeneratedValue → Auto-increment ID
 // 👉 IDENTITY → DB handles ID generation
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private long bookingId;
    private int seatCount;
    private double totalCost;
@@ -37,7 +37,7 @@ public class Booking {
 // 👉 JsonBackReference -> Booking will NOT include movie in JSON response (prevents infinite recursion)
    @ManyToOne
    @JoinColumn(name = "movieId")
-   @JsonBackReference
+   @JsonBackReference("movie-booking")
    private Movie movie;
 
 // 👉 Many bookings → ONE user
@@ -45,6 +45,6 @@ public class Booking {
 // 👉 JsonBackReference -> child
    @ManyToOne
    @JoinColumn(name = "userId")
-   @JsonBackReference
+   @JsonBackReference("user-booking")
    private User user;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Entity.Booking;
+import com.example.backend.Entity.BookingDto;
 import com.example.backend.Service.BookingService;
 import com.example.backend.Service.MovieService;
 
@@ -36,8 +37,8 @@ public class BookingController {
     // {movieId}/{userId}👉 Path variables: [/api/booking/1/5]
     // @RequestBody👉 Request body contains JSON of Booking object
     @PostMapping("/{movieId}/{userId}")
-    public ResponseEntity<Booking> addBooking(@RequestBody Booking booking , @PathVariable long movieId, @PathVariable int userId){
-        return ResponseEntity.status(201).body(bookingService.createBooking(booking,movieId,userId));
+    public ResponseEntity<Booking> addBooking(@RequestBody BookingDto bookingDto, @PathVariable long movieId, @PathVariable int userId){
+        return ResponseEntity.status(201).body(bookingService.createBooking(bookingDto,movieId,userId));
     }
 
     @PutMapping("/{bookingId}")
