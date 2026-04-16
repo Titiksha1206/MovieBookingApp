@@ -36,8 +36,8 @@ public class MovieController {
     }
 
     @PutMapping("/{movieId}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable long movieId, @RequestBody Movie movie){
-        return ResponseEntity.ok(movieService.updateMovie(movieId, movie)
+    public ResponseEntity<Movie> updateMovie(@PathVariable long movieId, @RequestBody MovieDto dto){
+        return ResponseEntity.ok(movieService.updateMovie(movieId, dto)
         );
     }
 

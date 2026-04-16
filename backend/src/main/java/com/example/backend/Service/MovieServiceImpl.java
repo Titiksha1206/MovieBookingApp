@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.Entity.Booking;
 import com.example.backend.Entity.Movie;
+import com.example.backend.Entity.MovieDto;
 import com.example.backend.Exception.MovieNotFoundException;
 import com.example.backend.Repository.MovieRepo;
 
@@ -24,7 +25,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie updateMovie(long movieId, Movie movie){
+    public Movie updateMovie(long movieId, MovieDto movie){
         Movie existing = repo.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Movie not found with id: " + movieId));
 

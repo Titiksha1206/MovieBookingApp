@@ -28,7 +28,7 @@ public class Booking {
 // 👉 IDENTITY → DB handles ID generation
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private long bookingId;
+   private Long bookingId;
    private int seatCount;
    private double totalCost;
 

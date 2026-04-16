@@ -54,17 +54,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking updateBooking(long bookingId, Booking booking){
+    public Booking updateBooking(long bookingId, BookingDto bookingDto){
 
         Booking existing = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking Not Found with id: " + bookingId));
 
-        if (booking.getSeatCount() <= 0) {
+        if (bookingDto.getSeatCount() <= 0) {
             throw new InsufficientSeatCountException("Invalid seat count");
         }
 
-        existing.setSeatCount(booking.getSeatCount());
-        existing.setTotalCost(booking.getTotalCost());
+        existing.setSeatCount(bookingDto.getSeatCount());
+        existing.setTotalCost(bookingDto.getTotalCost());
 
         return bookingRepo.save(existing);
     }

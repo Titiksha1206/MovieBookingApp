@@ -42,8 +42,8 @@ public class BookingController {
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<Booking> updateBooking(@PathVariable long bookingId, @RequestBody Booking booking){
-        return ResponseEntity.status(200).body(bookingService.updateBooking(bookingId, booking));
+    public ResponseEntity<Booking> updateBooking(@PathVariable long bookingId, @RequestBody BookingDto bookingDto){
+        return ResponseEntity.status(200).body(bookingService.updateBooking(bookingId, bookingDto));
     }
 
     @GetMapping("/{bookingId}")
