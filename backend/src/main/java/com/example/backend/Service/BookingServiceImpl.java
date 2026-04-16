@@ -35,10 +35,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking createBooking(BookingDto bookingDto, long movieId,int userId){
         Movie movie = movieRepo.findById(movieId)
-                .orElseThrow(() -> new MovieNotFoundException("Movie not found"));
+                .orElseThrow(() -> new MovieNotFoundException("Movie not found with id: " + movieId));
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
         if(bookingDto.getSeatCount() <= 0){
             throw new InsufficientSeatCountException("Invalid seat count");
@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking updateBooking(long bookingId, Booking booking){
 
         Booking existing = bookingRepo.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking Not Found"));
+                .orElseThrow(() -> new BookingNotFoundException("Booking Not Found with id: " + bookingId));
 
         if (booking.getSeatCount() <= 0) {
             throw new InsufficientSeatCountException("Invalid seat count");
@@ -71,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking getBookingById(long bookingId){
-        return bookingRepo.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Booking Not Found"));
+        return bookingRepo.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Booking Not Found with id: " + bookingId));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteBooking(long bookingId){
       if (!bookingRepo.existsById(bookingId)) {
-        throw new BookingNotFoundException("Booking Not Found");
+        throw new BookingNotFoundException("Booking Not Found with id: " + bookingId);
     }
 
         bookingRepo.deleteById(bookingId);
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> findBookingsByUser(int userId){
         if (!userRepo.existsById(userId)){
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("User not found with id: " + userId);
         }
 
         return bookingRepo.findBookingsByUser(userId);
