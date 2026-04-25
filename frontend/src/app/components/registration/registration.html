@@ -1,9 +1,8 @@
-<div class="form-container">
+<!-- <div class="form-container">
   <h2>Registration</h2>
 
   <form [formGroup]="form" (ngSubmit)="register()">
 
-    <!-- Username -->
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" formControlName="username" />
@@ -17,7 +16,6 @@
       }
     </div>
 
-    <!-- Email -->
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" id="email" formControlName="email" />
@@ -34,7 +32,6 @@
       }
     </div>
 
-    <!-- Password -->
     <div class="form-group">
       <label for="password">Password</label>
       <input type="password" id="password" formControlName="password" />
@@ -51,7 +48,6 @@
       }
     </div>
 
-    <!-- Confirm Password -->
     <div class="form-group">
       <label for="confirmPassword">Confirm Password</label>
       <input
@@ -75,7 +71,6 @@
       }
     </div>
 
-    <!-- Mobile Number -->
     <div class="form-group">
       <label for="mobileNumber">Mobile Number</label>
       <input
@@ -96,7 +91,6 @@
       }
     </div>
 
-    <!-- Role -->
     <div class="form-group">
       <label for="role">Role</label>
       <select id="role" formControlName="userRole">
@@ -119,4 +113,141 @@
     </button>
 
   </form>
+</div> -->
+<div class="min-h-[90vh] flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-lg">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-4">🎟</div>
+      <h2 class="font-[family-name:var(--font-display)] text-3xl font-bold text-white">
+        Create Account
+      </h2>
+      <p class="text-gray-500 text-sm mt-2">Join and start booking today</p>
+    </div>
+
+    <div class="card p-8">
+      <form [formGroup]="form" (ngSubmit)="register()" class="space-y-4">
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="field-label">Username</label>
+          <input type="text" id="username" formControlName="username"
+                 class="input-field" placeholder="Choose a username" />
+          @if (username.touched && username.invalid) {
+            <div class="error-text">
+              @if (username.errors?.['required']) {
+                <span>Username is required</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="field-label">Email</label>
+          <input type="email" id="email" formControlName="email"
+                 class="input-field" placeholder="you@example.com" />
+          @if (email.touched && email.invalid) {
+            <div class="error-text">
+              @if (email.errors?.['required']) {
+                <span>Email is required</span>
+              }
+              @if (email.errors?.['email']) {
+                <span>Email is invalid</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Password + Confirm side by side -->
+        <div class="grid grid-cols-2 gap-4">
+
+          <div>
+            <label for="password" class="field-label">Password</label>
+            <input type="password" id="password" formControlName="password"
+                   class="input-field" placeholder="Min. 6 chars" />
+            @if (password.touched && password.invalid) {
+              <div class="error-text">
+                @if (password.errors?.['required']) {
+                  <span>Password is required</span>
+                }
+                @if (password.errors?.['minlength']) {
+                  <span>Minimum 6 characters</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="field-label">Confirm</label>
+            <input type="password" id="confirmPassword"
+                   formControlName="confirmPassword"
+                   class="input-field" placeholder="Re-enter" />
+            @if (confirmPassword.touched && confirmPassword.invalid) {
+              <div class="error-text">
+                @if (confirmPassword.errors?.['required']) {
+                  <span>Required</span>
+                }
+              </div>
+            }
+            @if (confirmPassword.errors?.['mismatch']) {
+              <div class="error-text">Passwords do not match</div>
+            }
+          </div>
+
+        </div>
+
+        <!-- Mobile Number -->
+        <div>
+          <label for="mobileNumber" class="field-label">Mobile Number</label>
+          <input type="text" id="mobileNumber" formControlName="mobileNumber"
+                 class="input-field" placeholder="10-digit number" />
+          @if (mobileNumber.touched && mobileNumber.invalid) {
+            <div class="error-text">
+              @if (mobileNumber.errors?.['required']) {
+                <span>Mobile number is required</span>
+              }
+              @if (mobileNumber.errors?.['pattern']) {
+                <span>Must be exactly 10 digits</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Role -->
+        <div>
+          <label for="role" class="field-label">Role</label>
+          <select id="role" formControlName="userRole" class="input-field">
+            <option value="">Select a role</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="USER">USER</option>
+          </select>
+          @if (role.touched && role.invalid) {
+            <div class="error-text">
+              @if (role.errors?.['required']) {
+                <span>Role is required</span>
+              }
+            </div>
+          }
+        </div>
+
+        <button type="submit" [disabled]="form.invalid"
+                class="btn-gold w-full py-3 rounded-lg mt-2">
+          Create Account →
+        </button>
+
+      </form>
+
+      <p class="text-center text-gray-600 text-sm mt-6">
+        Already have an account?
+        <a routerLink="/login"
+           class="text-[color:var(--color-gold-400)] hover:text-[color:var(--color-gold-300)]
+                  font-medium ml-1 transition-colors">
+          Sign in
+        </a>
+      </p>
+    </div>
+
+  </div>
 </div>

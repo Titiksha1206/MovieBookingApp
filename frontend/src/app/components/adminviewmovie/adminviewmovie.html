@@ -1,4 +1,4 @@
-<h2>Manage Movies</h2>
+<!-- <h2>Manage Movies</h2>
 <table>
   <thead>
     <tr>
@@ -31,4 +31,231 @@
       </tr>
     }
   </tbody>
-</table>
+</table> -->
+<!-- <div class="max-w-6xl mx-auto px-6 py-10">
+
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+        Manage Movies
+      </h2>
+      <p class="text-gray-500 text-sm mt-1">{{ movies.length }} movies listed</p>
+    </div>
+    <a routerLink="/admin/add/newMovies" class="btn-gold text-sm px-5 py-2.5 rounded-lg">
+      + Add Movie
+    </a>
+  </div>
+
+  <div class="card overflow-hidden">
+    <table class="cinema-table">
+      <thead>
+        <tr>
+          <th class="w-[30%]">Title</th>
+          <th class="w-[20%]">Genre</th>
+          <th class="w-[15%]">Duration</th>
+          <th class="w-[15%]">Price</th>
+          <th class="w-[20%] text-center">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (movie of movies; track movie.movieId) {
+          <tr>
+            <td class="font-medium text-white">{{ movie.title }}</td>
+            <td><span class="badge">{{ movie.genre }}</span></td>
+            <td class="text-gray-500">{{ movie.duration }} min</td>
+            <td class="text-[color:var(--color-gold-400)] font-semibold">
+              ₹{{ movie.price }}
+            </td>
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button (click)="updateMovie(movie.movieId)"
+                        class="btn-ghost-edit">
+                  ✏ Edit
+                </button>
+                <button (click)="deleteMovie(movie.movieId)"
+                        class="btn-ghost-red">
+                  🗑 Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+
+        @if (movies.length === 0) {
+          <tr>
+            <td colspan="5" class="text-center py-16 text-gray-600">
+              <div class="text-5xl mb-3">🎬</div>
+              <div>No movies yet. Add one to get started.</div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div> -->
+
+<div class="max-w-6xl mx-auto px-6 py-10">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+        Manage Movies
+      </h2>
+      <p class="text-gray-500 text-sm mt-1">{{ movies.length }} movies listed</p>
+    </div>
+    <a routerLink="/admin/add/newMovies" class="btn-gold text-sm px-5 py-2.5 rounded-lg">
+      + Add Movie
+    </a>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+    @for (movie of movies; track movie.movieId) {
+      <div class="card overflow-hidden
+                  hover:border-[color-mix(in_srgb,var(--color-gold-500)_30%,transparent)]
+                  transition-all duration-300">
+
+        <!-- Poster -->
+        @if (movie.imageUrl) {
+          <div class="relative h-48">
+            <img
+              [src]="movie.imageUrl"
+              [alt]="movie.title"
+              class="w-full h-full object-cover"
+              (error)="movie.imageUrl = ''"
+            />
+            <!-- Dark gradient overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+
+            <!-- CBFC badge -->
+            @if (movie.cbfc) {
+              <span
+                [ngClass]="{
+                  'bg-green-500 text-white':  movie.cbfc === 'U',
+                  'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                  'bg-red-500 text-white':    movie.cbfc === 'A',
+                  'bg-blue-500 text-white':   movie.cbfc === 'S'
+                }"
+                class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded">
+                {{ movie.cbfc }}
+              </span>
+            }
+
+            <!-- Price on image -->
+            <span class="absolute bottom-2 right-2
+                         text-[color:var(--color-gold-400)] font-bold text-base drop-shadow">
+              ₹{{ movie.price }}
+            </span>
+
+            <!-- Title on image -->
+            <h3 class="absolute bottom-2 left-3 font-bold text-white text-sm
+                       drop-shadow line-clamp-1 max-w-[60%]">
+              {{ movie.title }}
+            </h3>
+          </div>
+
+        } @else {
+          <!-- Fallback: no image -->
+          <div class="relative h-48 bg-gray-900 flex items-center
+                      justify-center border-b border-gray-800">
+            <span class="text-6xl opacity-20">🎬</span>
+
+            @if (movie.cbfc) {
+              <span
+                [ngClass]="{
+                  'bg-green-500 text-white':  movie.cbfc === 'U',
+                  'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                  'bg-red-500 text-white':    movie.cbfc === 'A',
+                  'bg-blue-500 text-white':   movie.cbfc === 'S'
+                }"
+                class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded">
+                {{ movie.cbfc }}
+              </span>
+            }
+
+            <span class="absolute bottom-2 right-3
+                         text-[color:var(--color-gold-400)] font-bold text-base">
+              ₹{{ movie.price }}
+            </span>
+
+            <h3 class="absolute bottom-2 left-3 font-bold text-white text-sm
+                       line-clamp-1 max-w-[60%]">
+              {{ movie.title }}
+            </h3>
+          </div>
+        }
+
+        <!-- Card Details -->
+        <div class="px-4 pt-3 pb-1 space-y-2">
+
+          <!-- Language -->
+          @if (movie.language) {
+            <div class="flex items-center gap-2 text-sm text-gray-300">
+              <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+                   stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0
+                         016.412 9m6.088 9h7M11 21l5-10 5
+                         10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+              </svg>
+              <span class="truncate">{{ movie.language }}</span>
+            </div>
+          }
+
+          <!-- Genre -->
+          <div class="flex items-center gap-2 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+                 stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10
+                       0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1
+                       1 0 00-1 1v14a1 1 0 001 1z"/>
+            </svg>
+            <span class="truncate">{{ movie.genre }}</span>
+          </div>
+
+          <!-- Duration -->
+          <div class="flex items-center gap-2 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+                 stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke-width="2"/>
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="M12 6v6l4 2"/>
+            </svg>
+            <span>{{ movie.duration | duration }}</span>
+          </div>
+
+        </div>
+
+        <!-- Edit + Delete -->
+        <div class="flex gap-2 px-4 py-3 mt-1 border-t border-gray-800">
+          <button
+            (click)="updateMovie(movie.movieId)"
+            class="btn-ghost-edit flex-1 text-center">
+            ✏ Edit
+          </button>
+          <button
+            (click)="deleteMovie(movie.movieId)"
+            class="btn-ghost-red flex-1 text-center">
+            🗑 Delete
+          </button>
+        </div>
+
+      </div>
+    }
+
+  </div>
+
+  <!-- Empty State -->
+  @if (movies.length === 0) {
+    <div class="text-center py-24">
+      <div class="text-5xl mb-3">🎬</div>
+      <p class="text-gray-600">No movies yet. Add one to get started.</p>
+    </div>
+  }
+
+</div>

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
   providedIn: 'root',
 })
 export class BookingService {
-  public baseUrl = "";
+  public baseUrl = "http://localhost:8080/api/booking";
   constructor(private httpClient : HttpClient) { }
 
   addBooking(booking : Booking,movieId:number,userId:number) : Observable<Booking> {

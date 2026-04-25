@@ -4,4 +4,7 @@ export interface Movie {
   genre: string;
   duration: number;
   price: number;
+  language: string;
+  cbfc: string;
+  imageUrl : string; 
 }

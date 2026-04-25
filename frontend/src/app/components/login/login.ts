@@ -46,21 +46,22 @@ export class Login implements OnInit {
       next: (data) => {
         // Keep your existing behaviour
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', String(data.userId));
+        localStorage.setItem('userId', String(data.userId));  
         localStorage.setItem('userRole', data.userRole);
         localStorage.setItem('username', data.username);
 
         // ✅ keep app state in sync (you already do this)
-        // this.authService.setUser({
-        //   userId: data.userId,
-        //   userRole: data.userRole,
-        //   username: data.username
-        // });
+        this.authService.setUser({ userId: data.userId, userRole: data.userRole, username: data.username });
 
         // Optional UX: reset form after success
         form.resetForm();
-
-        this.router.navigate(['/']);
+        // ✅ Redirect based on role
+  if (data.userRole === 'ADMIN') {
+    this.router.navigate(['/admin/view/Movies']);
+  } else {
+    this.router.navigate(['/user/view/Movies']);
+  }
+        // this.router.navigate(['/']);
       },
       error: (err) => {
         console.error(err);

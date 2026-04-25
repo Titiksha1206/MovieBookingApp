@@ -1,4 +1,4 @@
-<div class="navbar">
+<!-- <div class="navbar">
   <div class="company">
     BOOK MYSHOW
   </div>
@@ -30,4 +30,61 @@
     }
 
   </div>
-</div>
+</div> -->
+
+<nav class="bg-[color:var(--color-cinema-950)] border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-2.5">
+      <span class="text-2xl">🎬</span>
+      <span class="font-[family-name:var(--font-display)] text-xl font-bold
+                   tracking-[0.15em] text-[color:var(--color-gold-400)] uppercase">
+       SnemaTix
+      </span>
+    </a>
+
+    <!-- Right side -->
+    <div class="flex items-center gap-4">
+
+      <!-- User info badge -->
+      @if (isLoggedIn) {
+        <div class="flex items-center gap-2.5">
+          <div class="avatar">{{ userName[0]?.toUpperCase() }}</div>
+          <div class="hidden sm:block">
+            <div class="text-sm text-gray-200 font-medium leading-none">{{ userName }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">{{ userRole }}</div>
+          </div>
+        </div>
+      }
+
+      <!-- Logged OUT: Register + Login -->
+      @if (!isLoggedIn) {
+        <div class="flex items-center gap-3">
+          <a routerLink="/register"
+             class="text-sm text-gray-400 hover:text-[color:var(--color-gold-400)] transition-colors">
+            Register
+          </a>
+          <a routerLink="/login" class="btn-gold text-sm px-5 py-2 rounded-lg">
+            Sign In
+          </a>
+        </div>
+
+      } @else {
+
+        <!-- Logged IN: Nav links -->
+        @if (userRole === 'ADMIN') {
+          <app-adminnav></app-adminnav>
+        } @else {
+          <app-usernav></app-usernav>
+        }
+
+        <!-- Logout -->
+        <button (click)="logout()" class="btn-ghost-red">
+          ⏻ Logout
+        </button>
+      }
+
+    </div>
+  </div>
+</nav>

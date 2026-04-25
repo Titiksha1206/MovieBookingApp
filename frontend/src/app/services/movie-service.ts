@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
   providedIn: 'root',
 })
 export class MovieService {
-   public baseUrl = "";
+   public baseUrl = "http://localhost:8080/api/movie";
 
   constructor(private httpClient : HttpClient) { }
 

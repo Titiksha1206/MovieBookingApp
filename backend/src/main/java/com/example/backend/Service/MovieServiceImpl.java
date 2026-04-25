@@ -20,7 +20,15 @@ public class MovieServiceImpl implements MovieService {
     }
     
     @Override
-    public Movie addMovie(Movie movie){
+    public Movie addMovie(MovieDto dto){
+        Movie movie = new Movie();
+        movie.setTitle(dto.getTitle());
+        movie.setGenre(dto.getGenre());
+        movie.setDuration(dto.getDuration());
+        movie.setPrice(dto.getPrice());
+        movie.setLanguage(dto.getLanguage());
+        movie.setCbfc(dto.getCbfc());
+        movie.setImageUrl(dto.getImageUrl()); 
         return repo.save(movie);
     }
 
@@ -33,6 +41,9 @@ public class MovieServiceImpl implements MovieService {
         existing.setDuration(movie.getDuration());
         existing.setGenre(movie.getGenre());
         existing.setPrice(movie.getPrice());
+        existing.setLanguage(movie.getLanguage());
+        existing.setCbfc(movie.getCbfc()); 
+        existing.setImageUrl(movie.getImageUrl());        
 
         return repo.save(existing);
     }

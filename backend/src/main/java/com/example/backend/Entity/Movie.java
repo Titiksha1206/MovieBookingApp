@@ -2,7 +2,7 @@ package com.example.backend.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -29,12 +29,16 @@ public class Movie {
     private int duration;
     private String genre;
     private int price;
+    private String language;
+    private String cbfc;
+    private String imageUrl;
     
     // 👉 mappedBy = "movie" -> The relationship is controlled by the movie field inside Booking class
     // 👉 cascade = CascadeType.ALL -> This controls what happens to bookings when movie changes
     // 👉 orphanRemoval = true → If a booking is removed from list → delete it from DB
     // 👉 JsonManagedReference -> Movie will include bookings in JSON response (parent side of relationship)
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("movie-booking")
+    // @JsonManagedReference("movie-booking")
+     @JsonIgnore
     private List<Booking> bookings = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-<h2>All Bookings</h2>
+<!-- <h2>All Bookings</h2>
 <table>
   <thead>
     <tr>
@@ -23,4 +23,63 @@
       </tr>
     }
   </tbody>
-</table>
+</table> -->
+<div class="max-w-6xl mx-auto px-6 py-10">
+
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+        All Bookings
+      </h2>
+      <p class="text-gray-500 text-sm mt-1">{{ bookings.length }} total bookings</p>
+    </div>
+    <span class="badge-gold py-2 px-4">Admin View</span>
+  </div>
+
+  <div class="card overflow-hidden">
+    <table class="cinema-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Movie Title</th>
+          <th>Genre</th>
+          <th>Duration</th>
+          <th>Seats</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (booking of bookings; track booking.bookingId) {
+          <tr>
+            <td>
+              <div class="flex items-center gap-2.5">
+                <div class="avatar">
+                  {{ booking.user.username[0]?.toUpperCase() }}
+                </div>
+                <span class="text-gray-200">{{ booking.user.username }}</span>
+              </div>
+            </td>
+            <td class="font-medium text-white">{{ booking.movie.title }}</td>
+            <td><span class="badge">{{ booking.movie.genre }}</span></td>
+            <td class="text-gray-500">{{ booking.movie.duration }} min</td>
+            <td class="text-gray-200 font-semibold">{{ booking.seatCount }}</td>
+            <td class="text-[color:var(--color-gold-400)] font-bold">
+              ₹{{ booking.totalCost }}
+            </td>
+          </tr>
+        }
+
+        @if (bookings.length === 0) {
+          <tr>
+            <td colspan="6" class="text-center py-16 text-gray-600">
+              <div class="text-5xl mb-3">📋</div>
+              <div>No bookings found</div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

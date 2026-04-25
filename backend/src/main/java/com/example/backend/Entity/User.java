@@ -2,7 +2,7 @@ package com.example.backend.Entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +31,8 @@ public class User {
     private String userRole;
     
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference("user-booking")
+    // @JsonManagedReference("user-booking")
+    @JsonIgnore
     private List<Booking> bookings;
 
 }

@@ -1,6 +1,33 @@
-<div  class="nav-links">
+<!-- <div  class="nav-links">
     <a routerLink="/">Home</a>
     <a routerLink="/admin/add/newMovies">Add Movies</a>
     <a routerLink="/admin/view/Movies">View Movies</a>
     <a routerLink="/admin/view/AllBookings">Movie Bookings</a>
-</div>
+</div> -->
+<nav class="flex items-center gap-1">
+
+  <a routerLink="/admin/add/newMovies"
+     routerLinkActive="text-[color:var(--color-gold-400)] bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]"
+     class="px-3 py-1.5 text-sm text-gray-400 hover:text-[color:var(--color-gold-400)]
+            hover:bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]
+            rounded-lg transition-all duration-200">
+    ＋ Add Movie
+  </a>
+
+  <a routerLink="/admin/view/Movies"
+     routerLinkActive="text-[color:var(--color-gold-400)] bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]"
+     class="px-3 py-1.5 text-sm text-gray-400 hover:text-[color:var(--color-gold-400)]
+            hover:bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]
+            rounded-lg transition-all duration-200">
+    Movies
+  </a>
+
+  <a routerLink="/admin/view/AllBookings"
+     routerLinkActive="text-[color:var(--color-gold-400)] bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]"
+     class="px-3 py-1.5 text-sm text-gray-400 hover:text-[color:var(--color-gold-400)]
+            hover:bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]
+            rounded-lg transition-all duration-200">
+    Bookings
+  </a>
+
+</nav>

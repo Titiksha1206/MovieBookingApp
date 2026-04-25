@@ -14,4 +14,7 @@ public class MovieDto {
     private int duration;
     private String genre;
     private int price;
+    private String language;
+    private String cbfc; 
+    private String imageUrl;
 }

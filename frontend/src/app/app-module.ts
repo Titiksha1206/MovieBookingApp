@@ -16,6 +16,7 @@ import { Navbar } from './components/navbar/navbar';
 import { Usernav } from './components/usernav/usernav';
 import { Adminnav } from './components/adminnav/adminnav';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DurationPipe } from './pipes/duration-pipe';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     Navbar,
     Usernav,
     Adminnav,
+    DurationPipe,
   ],
   imports: [BrowserModule, ReactiveFormsModule, FormsModule, AppRoutingModule],
   providers: [

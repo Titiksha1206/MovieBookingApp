@@ -1,7 +1,5 @@
 package com.example.backend.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,7 +35,7 @@ public class Booking {
 // 👉 JsonBackReference -> Booking will NOT include movie in JSON response (prevents infinite recursion)
    @ManyToOne
    @JoinColumn(name = "movieId")
-   @JsonBackReference("movie-booking")
+   // @JsonBackReference("movie-booking")
    private Movie movie;
 
 // 👉 Many bookings → ONE user
@@ -45,6 +43,6 @@ public class Booking {
 // 👉 JsonBackReference -> child
    @ManyToOne
    @JoinColumn(name = "userId")
-   @JsonBackReference("user-booking")
+   // @JsonBackReference("user-booking")
    private User user;
 }

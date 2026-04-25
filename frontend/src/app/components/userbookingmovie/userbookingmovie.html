@@ -1,8 +1,7 @@
-<div class="page-bg">
+<!-- <div class="page-bg">
     <div class="booking-card">
       <h1 class="title">🎬 {{ movie.title }}</h1>
   
-     
       <div class="form-row fancy-input">
         <label for="seats">Enter Number of Seats</label>
         <div class="input-wrapper">
@@ -35,7 +34,6 @@
         </div>
       </div>
   
-      <!-- Preview Section -->
       <div class="preview">
         <div class="row">
           <span>Seats Selected:  </span>
@@ -51,7 +49,6 @@
         </div>
       </div>
   
-      <!-- Confirm Button -->
       <button
         class="confirm-btn"
         [disabled]="!seats || seats < 1 || !seatType"
@@ -61,4 +58,92 @@
   
   </div>
   </div>
+ -->
+<div class="min-h-[90vh] flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
 
+    <!-- Movie Header Card -->
+    <div class="card p-5 mb-4 flex items-center gap-4">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl flex-shrink-0
+                  bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)]
+                  border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]">
+        🎬
+      </div>
+      <div class="min-w-0">
+        <div class="badge-gold mb-1.5">Now Booking</div>
+        <h1 class="font-[family-name:var(--font-display)] text-lg font-bold text-white truncate">
+          {{ movie.title }}
+        </h1>
+      </div>
+    </div>
+
+    <div class="card p-7 space-y-6">
+
+      <!-- Seats Input -->
+      <div>
+        <label for="seats" class="field-label">🎟 Number of Seats</label>
+        <div class="relative">
+          <input
+            id="seats"
+            type="number"
+            min="1"
+            (change)="updateTotalCost()"
+            placeholder="e.g. 2"
+            [(ngModel)]="seats"
+            class="input-field text-lg font-semibold"
+          />
+        </div>
+      </div>
+
+      <!-- Seat Type -->
+      <div>
+        <label for="seatType" class="field-label">💺 Seat Category</label>
+        <div class="grid grid-cols-3 gap-3 mt-2">
+          @for (type of ['Economy', 'Middle', 'Balcony']; track type) {
+            <button
+              (click)="seatType = type; updateTotalCost()"
+              [class]="seatType === type
+                ? 'border-[color:var(--color-gold-500)] bg-[color:var(--color-gold-500)] text-black font-semibold'
+                : 'border-gray-700 text-gray-400 hover:border-[color-mix(in_srgb,var(--color-gold-500)_40%,transparent)] hover:text-gray-200'"
+              class="border rounded-xl py-3 text-sm transition-all duration-200">
+              {{ type }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Price Breakdown -->
+      <div class="bg-gray-800/50 rounded-xl p-4 space-y-3
+                  border border-gray-700/40">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Seats Selected</span>
+          <strong class="text-gray-200">{{ seats || 0 }}</strong>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Seat Type</span>
+          <strong class="text-gray-200">{{ seatType || 'Not Selected' }}</strong>
+        </div>
+        <div class="border-t border-gray-700 pt-3 flex justify-between items-center">
+          <span class="text-gray-500 text-sm">
+            Total
+            @if (perPerson) {
+              <span class="text-gray-600">(₹{{ perPerson }} each)</span>
+            }
+          </span>
+          <strong class="text-[color:var(--color-gold-400)] font-black text-2xl">
+            ₹{{ totalCost }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <button
+        [disabled]="!seats || seats < 1 || !seatType"
+        (click)="registerBooking()"
+        class="btn-gold w-full py-3.5 text-base rounded-xl">
+        ✅ Confirm Booking
+      </button>
+
+    </div>
+  </div>
+</div>

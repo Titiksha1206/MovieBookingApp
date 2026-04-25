@@ -1,9 +1,8 @@
-<div class="form-container">
+<!-- <div class="form-container">
   <h2>Login</h2>
 
   <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
 
-    <!-- Username -->
     <div class="form-group">
       <label for="username">Username</label>
 
@@ -25,7 +24,6 @@
       }
     </div>
 
-    <!-- Password -->
     <div class="form-group">
       <label for="password">Password</label>
 
@@ -55,4 +53,84 @@
     </button>
 
   </form>
+</div> -->
+<div class="min-h-[90vh] flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-sm">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-4">🎬</div>
+      <h2 class="font-[family-name:var(--font-display)] text-3xl font-bold text-white">
+        Welcome Back
+      </h2>
+      <p class="text-gray-500 text-sm mt-2">Sign in to continue booking</p>
+    </div>
+
+    <div class="card p-8">
+      <form #loginForm="ngForm" (ngSubmit)="login(loginForm)" class="space-y-5">
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="field-label">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            ngModel
+            #username="ngModel"
+            required
+            class="input-field"
+            placeholder="Enter your username"
+          />
+          @if (username.touched && username.invalid) {
+            <div class="error-text">
+              @if (username.errors?.['required']) {
+                <span>Username is required</span>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="field-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            ngModel
+            #password="ngModel"
+            required
+            class="input-field"
+            placeholder="••••••••"
+          />
+          @if (password.touched && password.invalid) {
+            <div class="error-text">
+              @if (password.errors?.['required']) {
+                <span>Password is required</span>
+              }
+            </div>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid"
+          class="btn-gold w-full py-3 rounded-lg mt-2">
+          Sign In →
+        </button>
+
+      </form>
+
+      <p class="text-center text-gray-600 text-sm mt-6">
+        No account?
+        <a routerLink="/register"
+           class="text-[color:var(--color-gold-400)] hover:text-[color:var(--color-gold-300)]
+                  font-medium ml-1 transition-colors">
+          Register here
+        </a>
+      </p>
+    </div>
+
+  </div>
 </div>

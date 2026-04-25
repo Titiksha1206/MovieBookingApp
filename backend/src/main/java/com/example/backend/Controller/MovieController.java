@@ -27,12 +27,7 @@ public class MovieController {
     
     @PostMapping
     public ResponseEntity<Movie> addMovie(@RequestBody MovieDto dto){
-        Movie movie = new Movie();
-        movie.setTitle(dto.getTitle());
-        movie.setGenre(dto.getGenre());
-        movie.setDuration(dto.getDuration());
-        movie.setPrice(dto.getPrice());
-        return ResponseEntity.status(201).body(movieService.addMovie(movie));
+        return ResponseEntity.status(201).body(movieService.addMovie(dto));
     }
 
     @PutMapping("/{movieId}")
@@ -43,12 +38,7 @@ public class MovieController {
 
     @GetMapping("/{movieId}")
     public ResponseEntity<Movie> getMovieById(@PathVariable long movieId){
-        
-        Movie movie = movieService.getMovieById(movieId);
-        if(movie != null){
-            return ResponseEntity.ok(movie);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(movieService.getMovieById(movieId));
     }
 
     @GetMapping
