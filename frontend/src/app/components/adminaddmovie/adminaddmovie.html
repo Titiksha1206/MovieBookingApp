@@ -200,7 +200,7 @@
           <p><span class="text-gray-500">A</span> — Restricted to Adults</p>
           <p><span class="text-gray-500">S</span> — Restricted to specialised audiences</p>
         </div>
-        @if (cbfc.touched || cbfc.invalid) {
+        @if (cbfc.touched || cbfc.dirty) {
           <div class="error-text">
             @if (cbfc.errors?.['required']) {
               <span>CBFC rating is required</span>
@@ -242,7 +242,7 @@
           <option value="Marathi">Marathi</option>
           <option value="Punjabi">Punjabi</option>
         </select>
-        @if (language.touched || language.invalid) {
+        @if (language.touched || language.dirty) {
           <div class="error-text">
             @if (language.errors?.['required']) {
               <span>Language is required</span>
@@ -253,7 +253,7 @@
 
       
       <!-- Duration + Price side by side -->
-     <div class="grid grid-cols-2 gap-4">
+     <div class="w-full">
 
   <!-- Duration: Hours + Minutes -->
   <div>
@@ -305,31 +305,12 @@
       </p>
     }
 
-    @if (duration.touched && duration.invalid) {
+    @if (duration.touched || duration.dirty) {
       <div class="error-text">
         @if (duration.errors?.['required']) {
           <span>Duration is required</span>
         }
         @if (duration.errors?.['min']) {
-          <span>Must be greater than 0</span>
-        }
-      </div>
-    }
-  </div>
-
-  <!-- Price -->
-  <div>
-    <label for="price" class="field-label">
-      Price (₹) <span class="text-red-500">*</span>
-    </label>
-    <input id="price" type="number" formControlName="price"
-           class="input-field" placeholder="e.g. 200" />
-    @if (price.touched || price.dirty) {
-      <div class="error-text">
-        @if (price.errors?.['required']) {
-          <span>Price is required</span>
-        }
-        @if (price.errors?.['min']) {
           <span>Must be greater than 0</span>
         }
       </div>
@@ -392,12 +373,6 @@
         <div class="flex justify-between text-sm">
           <span class="text-gray-500">Duration</span>
           <span class="text-gray-200">{{ movie?.duration }} min</span>
-        </div>
-        <div class="flex justify-between text-sm border-t border-gray-700 pt-2.5">
-          <span class="text-gray-500">Price</span>
-          <span class="text-gold-400 font-bold">
-            ₹{{ movie?.price }}
-          </span>
         </div>
       </div>
 

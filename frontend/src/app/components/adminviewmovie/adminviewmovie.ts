@@ -34,6 +34,25 @@ export class Adminviewmovie implements OnInit {
      })
     }
 
+    showDeleteModal = false;
+selectedMovieId: number | null = null;
+
+openDeleteModal(id: number) {
+  this.selectedMovieId = id;
+  this.showDeleteModal = true;
+}
+
+closeModal() {
+  this.showDeleteModal = false;
+  this.selectedMovieId = null;
+}
+
+confirmDelete() {
+  if (this.selectedMovieId !== null) {
+    this.deleteMovie(this.selectedMovieId);
+  }
+  this.closeModal();
+}
 
   deleteMovie(movieId : number) {
     this.movieService.deleteMovie(movieId).subscribe({
@@ -53,5 +72,7 @@ export class Adminviewmovie implements OnInit {
       this.router.navigate(['/admin/add/newMovies'], {queryParams:{movieId : movieId}})
   }
   
-
+  manageMovie(movieId: number): void {
+  this.router.navigate(['/admin/manage'], { queryParams: { movieId } });
+  } 
 }

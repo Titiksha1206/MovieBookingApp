@@ -1,0 +1,437 @@
+<div class="max-w-3xl mx-auto px-6 py-10">
+
+  <!-- ── Movie Header ── -->
+  @if (movie) {
+    <div class="card p-4 mb-6 flex items-center gap-4">
+      @if (movie.imageUrl) {
+        <img
+          [src]="movie.imageUrl"
+          [alt]="movie.title"
+          class="w-14 h-20 object-cover rounded-xl shrink-0
+                 border border-gray-700"
+        />
+      } @else {
+        <div class="w-14 h-20 rounded-xl bg-gray-800 flex items-center
+                    justify-center text-2xl shrink-0">
+          🎬
+        </div>
+      }
+      <div class="min-w-0">
+        <h2 class="font-display text-xl
+                   font-bold text-white truncate">
+          {{ movie.title }}
+        </h2>
+        <div class="flex items-center gap-2 mt-1 flex-wrap">
+          @if (movie.cbfc) {
+            <span
+              class="text-xs font-bold px-2 py-0.5 rounded"
+              [ngClass]="{
+                'bg-green-500 text-white':  movie.cbfc === 'U',
+                'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                'bg-red-500 text-white':    movie.cbfc === 'A',
+                'bg-blue-500 text-white':   movie.cbfc === 'S'
+              }">
+              {{ movie.cbfc }}
+            </span>
+          }
+          @if (movie.language) {
+            <span class="text-xs text-gray-500">🗣 {{ movie.language }}</span>
+          }
+          <!-- Duration -->
+    <div class="flex items-center gap-1 text-gray-500">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+        <path stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2" d="M12 6v6l4 2"/>
+      </svg>
+      <span class="text-xs">{{ movie.duration | duration }}</span>
+    </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Add Showtime Toggle Button ── -->
+  <button
+    (click)="showForm = !showForm"
+    class="btn-gold w-full text-sm py-2.5 rounded-lg mb-5">
+    {{ showForm ? '✕ Cancel' : '+ Add New Showtime' }}
+  </button>
+
+  <!-- ════════════════════════════
+       ADD SHOWTIME FORM
+  ════════════════════════════ -->
+  @if (showForm) {
+    <div class="card p-6 mb-6">
+      <h3 class="text-xs font-semibold text-gray-500
+                 uppercase tracking-wider mb-5">
+        New Showtime Details
+      </h3>
+
+      <div class="space-y-5">
+
+        <!-- Theater -->
+        <div>
+          <label class="field-label">Theater</label>
+          <select [(ngModel)]="newTheater" class="input-field">
+            <option value="">Select Theater</option>
+            @for (t of theaters; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Date + Time -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="field-label">Date</label>
+            <input
+              type="date"
+              [(ngModel)]="newDate"
+              [min]="todayDate"
+              class="input-field"
+            />
+          </div>
+          <div>
+            <label class="field-label">Time</label>
+            <input
+              type="time"
+              [(ngModel)]="newTime"
+              class="input-field"
+            />
+          </div>
+        </div>
+
+        <!-- ── Seat Categories ── -->
+        <div>
+          <label class="field-label mb-3 block">
+            Select Seat Categories
+          </label>
+
+          <!-- Toggle Buttons -->
+          <div class="grid grid-cols-2 gap-2 mb-4">
+            @for (cat of selectedCategories; track cat.name; let i = $index) {
+              <button
+                type="button"
+                (click)="toggleCategory(i)"
+                [class]="cat.selected
+                  ? 'border-gold-500 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] text-white'
+                  : 'border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300'"
+                class="border rounded-xl py-2.5 px-3 text-sm font-medium
+                       transition-all duration-200 flex items-center gap-2 text-left">
+                <span>{{ cat.icon }}</span>
+                <span>{{ cat.name }}</span>
+                @if (cat.selected) {
+                  <span class="ml-auto text-gold-400 text-xs font-bold">
+                    ✓
+                  </span>
+                }
+              </button>
+            }
+          </div>
+
+          <!-- Price + Seats for each selected category -->
+          @for (cat of selectedCategories; track cat.name; let i = $index) {
+            @if (cat.selected) {
+              <div class="bg-gray-800/50 border border-gray-700/50
+                          rounded-xl p-4 mb-3">
+
+                <!-- Category Header -->
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="text-lg">{{ cat.icon }}</span>
+                  <span class="text-sm font-semibold text-gray-200">
+                    {{ cat.name }}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+
+                  <!-- Price -->
+                  <div>
+                    <label class="field-label">Price per seat</label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2
+                                   text-gray-500 text-sm font-medium">₹</span>
+                      <input
+                        type="number"
+                        [(ngModel)]="selectedCategories[i].price"
+                        class="input-field pl-8"
+                        placeholder="0"
+                        min="1"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Total Seats -->
+                  <div>
+                    <label class="field-label">Total Seats</label>
+                    <input
+                      type="number"
+                      [(ngModel)]="selectedCategories[i].totalSeats"
+                      class="input-field"
+                      placeholder="50"
+                      min="1"
+                    />
+                  </div>
+
+                </div>
+              </div>
+            }
+          }
+
+          <!-- Total Seats Summary -->
+          @if (totalSelectedSeats > 0) {
+            <div class="flex items-center justify-between
+                        bg-gray-800/30 rounded-xl px-4 py-2.5
+                        border border-gray-700/40 mt-2">
+              <span class="text-xs text-gray-500">Total Capacity</span>
+              <span class="text-sm font-bold text-white">
+                {{ totalSelectedSeats }} seats
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          (click)="addShowtime()"
+          class="btn-gold w-full py-3 rounded-lg">
+          ✓ Add Showtime
+        </button>
+
+      </div>
+    </div>
+  }
+
+  <!-- ════════════════════════════
+       SHOWTIMES LIST
+  ════════════════════════════ -->
+  @if (showtimes.length > 0) {
+  <div class="space-y-3">
+    @for (showtime of showtimes; track showtime.showtimeId) {
+      <div class="card p-4">
+
+        <!-- ── View Mode ── -->
+        @if (editingShowtimeId !== showtime.showtimeId) {
+
+          <div class="flex items-start justify-between gap-4">
+
+            <div class="flex items-start gap-3 flex-1 min-w-0">
+
+              <!-- Date Box -->
+              <div class="bg-gray-800 rounded-xl p-2.5 text-center
+                          min-w-14 shrink-0 border border-gray-700">
+                <div class="text-xs text-gray-500 uppercase">
+                  {{ showtime.showDate | date:'MMM' }}
+                </div>
+                <div class="text-xl font-bold text-white leading-tight">
+                  {{ showtime.showDate | date:'d' }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ showtime.showDate | date:'EEE' }}
+                </div>
+              </div>
+
+              <!-- Info -->
+              <div class="min-w-0 flex-1">
+                <p class="text-white text-sm font-medium truncate">
+                  {{ showtime.theater }}
+                </p>
+                <div class="flex items-center gap-3 mt-1 flex-wrap">
+                  <span class="text-gold-400
+                               font-bold text-sm">
+                    {{ showtime.showTime }}
+                  </span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full"
+                      [ngClass]="getAvailabilityDot(
+                        showtime.availableSeats, showtime.totalSeats)">
+                    </span>
+                    <span class="text-xs"
+                      [class]="getAvailabilityColor(
+                        showtime.availableSeats, showtime.totalSeats)">
+                      {{ getAvailabilityLabel(
+                        showtime.availableSeats, showtime.totalSeats) }}
+                    </span>
+                    <span class="text-xs text-gray-600">
+                      · {{ showtime.availableSeats }}/{{ showtime.totalSeats }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Seat Categories -->
+                @if (showtime.seatCategories && showtime.seatCategories.length > 0) {
+                  <div class="flex flex-wrap gap-2 mt-2.5">
+                    @for (cat of showtime.seatCategories; track cat.categoryId) {
+                      <div class="flex items-center gap-1.5 bg-gray-800/60
+                                  border border-gray-700/50 rounded-lg px-2.5 py-1">
+                        <span class="text-xs text-gray-400 font-medium">
+                          {{ cat.name }}
+                        </span>
+                        <span class="text-xs text-gray-600">·</span>
+                        <span class="text-xs text-gold-400
+                                     font-semibold">
+                          ₹{{ cat.price }}
+                        </span>
+                        <span class="text-xs text-gray-600">·</span>
+                        <span class="text-xs text-gray-500">
+                          {{ cat.availableSeats }} left
+                        </span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- ✅ Edit + Delete Buttons -->
+            <div class="flex flex-col gap-2 shrink-0">
+              <button
+                (click)="startEdit(showtime)"
+                class="btn-ghost-edit px-3 py-1.5 text-xs">
+                ✏ Edit
+              </button>
+              <button
+                (click)="deleteShowtime(showtime.showtimeId)"
+                class="btn-ghost-red px-3 py-1.5 text-xs">
+                🗑 Del
+              </button>
+            </div>
+
+          </div>
+
+        }
+
+        <!-- ── Edit Mode ── -->
+        @if (editingShowtimeId === showtime.showtimeId) {
+
+          <div class="space-y-4">
+
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-xs font-semibold text-gray-500
+                         uppercase tracking-wider">
+                Edit Showtime
+              </h3>
+              <button (click)="cancelEdit()"
+                      class="text-gray-600 hover:text-gray-300
+                             text-lg transition-colors leading-none">
+                ✕
+              </button>
+            </div>
+
+            <!-- Theater -->
+            <div>
+              <label class="field-label">Theater</label>
+              <select [(ngModel)]="editTheater" class="input-field">
+                <option value="">Select Theater</option>
+                @for (t of theaters; track t) {
+                  <option [value]="t">{{ t }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Date + Time -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="field-label">Date</label>
+                <input type="date" [(ngModel)]="editDate"
+                       [min]="todayDate" class="input-field" />
+              </div>
+              <div>
+                <label class="field-label">Time</label>
+                <input type="time" [(ngModel)]="editTime"
+                       class="input-field" />
+              </div>
+            </div>
+
+            <!-- Seat Categories -->
+            <div>
+              <label class="field-label mb-3 block">Seat Categories</label>
+
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                @for (cat of editSelectedCategories;
+                      track cat.name; let i = $index) {
+                  <button
+                    type="button"
+                    (click)="toggleEditCategory(i)"
+                    [class]="cat.selected
+                      ? 'border-gold-500 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] text-white'
+                      : 'border-gray-700 text-gray-500 hover:border-gray-500'"
+                    class="border rounded-xl py-2 px-3 text-sm font-medium
+                           transition-all duration-200 flex items-center gap-2">
+                    <span>{{ cat.icon }}</span>
+                    <span>{{ cat.name }}</span>
+                    @if (cat.selected) {
+                      <span class="ml-auto text-gold-400
+                                   text-xs font-bold">✓</span>
+                    }
+                  </button>
+                }
+              </div>
+
+              @for (cat of editSelectedCategories;
+                    track cat.name; let i = $index) {
+                @if (cat.selected) {
+                  <div class="bg-gray-800/50 border border-gray-700/50
+                              rounded-xl p-4 mb-3">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span>{{ cat.icon }}</span>
+                      <span class="text-sm font-semibold text-gray-200">
+                        {{ cat.name }}
+                      </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="field-label">Price per seat</label>
+                        <div class="relative">
+                          <span class="absolute left-3 top-1/2 -translate-y-1/2
+                                       text-gray-500 text-sm">₹</span>
+                          <input type="number"
+                                 [(ngModel)]="editSelectedCategories[i].price"
+                                 class="input-field pl-8"
+                                 placeholder="0" min="1" />
+                        </div>
+                      </div>
+                      <div>
+                        <label class="field-label">Total Seats</label>
+                        <input type="number"
+                               [(ngModel)]="editSelectedCategories[i].totalSeats"
+                               class="input-field"
+                               placeholder="50" min="1" />
+                      </div>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+
+            <!-- Save + Cancel -->
+            <div class="flex gap-3">
+              <button (click)="cancelEdit()"
+                      class="btn-outline flex-1 py-2.5 rounded-lg text-sm">
+                Cancel
+              </button>
+              <button (click)="saveEdit()"
+                      class="btn-gold flex-1 py-2.5 rounded-lg text-sm">
+                ✓ Save Changes
+              </button>
+            </div>
+
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+
+} @else {
+  <div class="text-center py-16 text-gray-600">
+    <div class="text-4xl mb-3">🕐</div>
+    <p class="text-sm">No showtimes added yet.</p>
+    <p class="text-xs text-gray-700 mt-1">
+      Click "+ Add New Showtime" to get started.
+    </p>
+  </div>
+}
+
+</div>

@@ -7,11 +7,10 @@ import com.example.backend.Entity.Movie;
 import com.example.backend.Entity.MovieDto;
 
 public interface MovieService {
-    public Movie addMovie(MovieDto dto);
-    public Movie updateMovie(long movieId, MovieDto movie);
-    public List<Movie> getAllMovies();
-    public Movie getMovieById(long movieId);
-    public boolean deleteMovieById(long movieId);
+    Movie addMovie(MovieDto dto);
+    Movie updateMovie(long movieId, MovieDto movie);
+    List<Movie> getAllMovies();
+    Movie getMovieById(long movieId);
+    boolean deleteMovieById(long movieId);
     List<Booking> findAllBookingsByMovie(long movieId);
-
 }

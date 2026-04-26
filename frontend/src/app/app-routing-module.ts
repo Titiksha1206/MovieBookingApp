@@ -11,6 +11,7 @@ import { Userbookingmovie } from './components/userbookingmovie/userbookingmovie
 import { Userviewbooking } from './components/userviewbooking/userviewbooking';
 import { adminGuard } from './guards/admin-guard';
 import { userGuard } from './guards/user-guard';
+import { Adminmanage } from './components/adminmanage/adminmanage';
 
 const routes: Routes = [
   {path:'', component : Home},
@@ -22,6 +23,7 @@ const routes: Routes = [
   {path:'user/view/Movies', component: Userviewmovie, canActivate:[userGuard]},
   {path:'user/bookMovie', component: Userbookingmovie, canActivate:[userGuard] },
   {path:'user/view/Mybookings', component: Userviewbooking},
+  { path: 'admin/manage', component: Adminmanage }
 ];
 
 @NgModule({

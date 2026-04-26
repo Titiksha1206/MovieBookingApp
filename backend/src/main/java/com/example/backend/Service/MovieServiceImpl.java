@@ -25,7 +25,6 @@ public class MovieServiceImpl implements MovieService {
         movie.setTitle(dto.getTitle());
         movie.setGenre(dto.getGenre());
         movie.setDuration(dto.getDuration());
-        movie.setPrice(dto.getPrice());
         movie.setLanguage(dto.getLanguage());
         movie.setCbfc(dto.getCbfc());
         movie.setImageUrl(dto.getImageUrl()); 
@@ -40,7 +39,6 @@ public class MovieServiceImpl implements MovieService {
         existing.setTitle(movie.getTitle());
         existing.setDuration(movie.getDuration());
         existing.setGenre(movie.getGenre());
-        existing.setPrice(movie.getPrice());
         existing.setLanguage(movie.getLanguage());
         existing.setCbfc(movie.getCbfc()); 
         existing.setImageUrl(movie.getImageUrl());        

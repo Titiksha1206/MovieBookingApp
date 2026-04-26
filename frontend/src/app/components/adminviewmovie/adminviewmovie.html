@@ -101,7 +101,7 @@
   <!-- Header -->
   <div class="flex items-center justify-between mb-8">
     <div>
-      <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+      <h2 class="font-display text-2xl font-bold text-white">
         Manage Movies
       </h2>
       <p class="text-gray-500 text-sm mt-1">{{ movies.length }} movies listed</p>
@@ -129,7 +129,7 @@
               (error)="movie.imageUrl = ''"
             />
             <!-- Dark gradient overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
 
             <!-- CBFC badge -->
             @if (movie.cbfc) {
@@ -144,12 +144,6 @@
                 {{ movie.cbfc }}
               </span>
             }
-
-            <!-- Price on image -->
-            <span class="absolute bottom-2 right-2
-                         text-[color:var(--color-gold-400)] font-bold text-base drop-shadow">
-              ₹{{ movie.price }}
-            </span>
 
             <!-- Title on image -->
             <h3 class="absolute bottom-2 left-3 font-bold text-white text-sm
@@ -177,11 +171,6 @@
               </span>
             }
 
-            <span class="absolute bottom-2 right-3
-                         text-[color:var(--color-gold-400)] font-bold text-base">
-              ₹{{ movie.price }}
-            </span>
-
             <h3 class="absolute bottom-2 left-3 font-bold text-white text-sm
                        line-clamp-1 max-w-[60%]">
               {{ movie.title }}
@@ -195,7 +184,7 @@
           <!-- Language -->
           @if (movie.language) {
             <div class="flex items-center gap-2 text-sm text-gray-300">
-              <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+              <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
                    stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0
@@ -208,7 +197,7 @@
 
           <!-- Genre -->
           <div class="flex items-center gap-2 text-sm text-gray-300">
-            <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+            <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
                  stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10
@@ -220,7 +209,7 @@
 
           <!-- Duration -->
           <div class="flex items-center gap-2 text-sm text-gray-300">
-            <svg class="w-4 h-4 text-gray-500 flex-shrink-0" fill="none"
+            <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
                  stroke="currentColor" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" stroke-width="2"/>
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -232,7 +221,7 @@
         </div>
 
         <!-- Edit + Delete -->
-        <div class="flex gap-2 px-4 py-3 mt-1 border-t border-gray-800">
+        <!-- <div class="flex gap-2 px-4 py-3 mt-1 border-t border-gray-800">
           <button
             (click)="updateMovie(movie.movieId)"
             class="btn-ghost-edit flex-1 text-center">
@@ -243,8 +232,30 @@
             class="btn-ghost-red flex-1 text-center">
             🗑 Delete
           </button>
-        </div>
+        </div> -->
 
+        <div class="flex gap-2 px-4 py-3 border-t border-gray-800">
+
+  <!-- ✅ Fixed Manage button -->
+  <button
+    (click)="manageMovie(movie.movieId)"
+    class="flex-1 text-xs py-1.5 rounded-lg border
+           border-[color-mix(in_srgb,var(--color-gold-500)_30%,transparent)]
+           text-gold-400
+           hover:bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]
+           transition-all duration-200">
+    ⚙ Manage
+  </button>
+
+  <button (click)="updateMovie(movie.movieId)" class="btn-ghost-edit px-3">
+    ✏
+  </button>
+
+  <button (click)="openDeleteModal(movie.movieId)" class="btn-ghost-red px-3">
+  🗑
+</button>
+
+</div>
       </div>
     }
 
@@ -258,4 +269,34 @@
     </div>
   }
 
+  @if (showDeleteModal) {
+  <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+
+    <div class="bg-cinema-900 p-6 rounded-2xl shadow-xl w-[90%] max-w-md text-center">
+
+      <h2 class="text-lg font-bold text-white mb-3">
+        Confirm Delete
+      </h2>
+
+      <p class="text-gray-400 mb-6">
+        Are you sure you want to delete this movie?
+      </p>
+
+      <div class="flex justify-center gap-4">
+        
+        <button (click)="closeModal()"
+                class="px-5 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-800">
+          Cancel
+        </button>
+
+        <button (click)="confirmDelete()"
+                class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+}
 </div>

@@ -28,7 +28,6 @@ public class Movie {
     private String title;
     private int duration;
     private String genre;
-    private int price;
     private String language;
     private String cbfc;
     private String imageUrl;
@@ -39,6 +38,10 @@ public class Movie {
     // 👉 JsonManagedReference -> Movie will include bookings in JSON response (parent side of relationship)
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     // @JsonManagedReference("movie-booking")
-     @JsonIgnore
+    @JsonIgnore
     private List<Booking> bookings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ShowTime> showtimes = new ArrayList<>();
 }

@@ -23,9 +23,7 @@ import com.example.backend.Service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
-
 public class UserController {
-    
   private final UserService userService;
   private final AuthenticationManager manager;
   private final JwtUtils jwtUtils;
@@ -53,17 +51,17 @@ public class UserController {
  // Saved in DB
     @PostMapping("/register")
     public ResponseEntity<User> addUser(@RequestBody RegisterDto userDto){
-      User user = new User();
-      user.setUsername(userDto.getUsername());
-      user.setEmail(userDto.getEmail());
-      user.setPassword(userDto.getPassword());
-      user.setMobileNumber(userDto.getMobileNumber());
-      user.setUserRole(userDto.getUserRole());
-      return ResponseEntity.status(201).body(userService.registerUser(user));
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setMobileNumber(userDto.getMobileNumber());
+        user.setUserRole(userDto.getUserRole());
+        return ResponseEntity.status(201).body(userService.registerUser(user));
     }
 
     @PostMapping("/login")
-     public ResponseEntity<?> login(@RequestBody UserDto userDto){
+    public ResponseEntity<?> login(@RequestBody UserDto userDto){
         
       // 👉 Spring internally:
                               //fetches user
@@ -77,8 +75,7 @@ public class UserController {
       // 👉 Loads user again (for token generation)
       UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
 
-        if(authentication.isAuthenticated())  // 👉 If authentication successful, generate token and return user details
-        {
+      if(authentication.isAuthenticated()) { // 👉 If authentication successful, generate token and return user details
         User user = userService.findByUsername(userDto.getUsername());
         LoginAuthenticationDto data = new LoginAuthenticationDto();
         data.setToken(jwtUtils.generateToken(userDetails));
@@ -86,14 +83,14 @@ public class UserController {
         data.setUserRole(user.getUserRole());
         data.setUserId(user.getUserId());
         return ResponseEntity.status(200).body(data);
-        }
-         else
-          return ResponseEntity.status(404).body("Not Found");
-     }
+      }
+      else
+        return ResponseEntity.status(404).body("Not Found");
+    }
 
 
-     @GetMapping
-     public ResponseEntity<List<User>> getAllUsers() {
-       return ResponseEntity.ok(userService.getAllUser());
-     }
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+      return ResponseEntity.ok(userService.getAllUser());
+    }
 }

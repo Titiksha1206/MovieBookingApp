@@ -33,7 +33,6 @@ durationMinutes: number = 0;
       title: ['', Validators.required],
       genre: ['', Validators.required],
       duration: ['', [Validators.required, Validators.min(1)]],
-      price: ['', [Validators.required, Validators.min(1)]],
       language: ['', Validators.required],
       cbfc: ['', Validators.required],
       imageUrl: ['', Validators.required] 
@@ -133,9 +132,6 @@ get genre() {
 }
 get duration() {
   return this.movieForm.get('duration')!;
-}
-get price() {
-  return this.movieForm.get('price')!;
 }
 get language() { 
   return this.movieForm.get('language')!; 

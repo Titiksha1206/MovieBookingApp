@@ -87,50 +87,132 @@
 <div class="max-w-6xl mx-auto px-6 py-10">
 
   <div class="mb-8">
-    <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+    <h2 class="font-display text-2xl font-bold text-white">
       Now Showing
     </h2>
     <p class="text-gray-500 text-sm mt-1">Pick a movie and grab your seats</p>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     @for (movie of movies; track movie.movieId) {
       <div class="card overflow-hidden
                   hover:border-[color-mix(in_srgb,var(--color-gold-500)_30%,transparent)]
-                  transition-all duration-300 group">
+                  transition-all duration-300">
 
-        <!-- Gold top accent bar -->
-        <div class="h-1.5 bg-[color:var(--color-gold-500)]"></div>
+        <!-- Poster -->
+        @if (movie.imageUrl) {
+          <div class="relative h-48">
+            <img
+              [src]="movie.imageUrl"
+              [alt]="movie.title"
+              class="w-full h-full object-cover"
+              (error)="movie.imageUrl = ''"
+            />
+            <div class="absolute inset-0 bg-linear-to-t
+                        from-black/70 to-transparent"></div>
 
-        <div class="p-5">
+            <!-- CBFC badge -->
+            @if (movie.cbfc) {
+              <span
+                [ngClass]="{
+                  'bg-green-500 text-white':  movie.cbfc === 'U',
+                  'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                  'bg-red-500 text-white':    movie.cbfc === 'A',
+                  'bg-blue-500 text-white':   movie.cbfc === 'S'
+                }"
+                class="absolute top-2 left-2 text-xs font-bold
+                       px-2 py-0.5 rounded">
+                {{ movie.cbfc }}
+              </span>
+            }
 
-          <!-- Genre badge -->
-          <span class="badge">{{ movie.genre }}</span>
-
-          <!-- Title -->
-          <h3 class="font-semibold text-white text-base mt-3 mb-1 line-clamp-1">
-            {{ movie.title }}
-          </h3>
-
-          <!-- Duration -->
-          <div class="text-xs text-gray-500 mb-2">
-            ⏱ {{ movie.duration }} min
+            <!-- Title on image -->
+            <h3 class="absolute bottom-2 left-3 font-bold text-white
+                       text-sm drop-shadow line-clamp-1 max-w-[70%]">
+              {{ movie.title }}
+            </h3>
           </div>
 
-          <!-- Price + Book Now inline -->
-          <div class="flex items-center justify-between
-                      pt-3 mt-2 border-t border-gray-800">
-            <span class="text-[color:var(--color-gold-400)] font-bold text-lg">
-              ₹{{ movie.price }}
-            </span>
-            <button
-              (click)="navigateToBooking(movie.movieId)"
-              class="btn-gold text-xs px-4 py-2 rounded-lg">
-              Book Now
-            </button>
+        } @else {
+          <!-- Fallback -->
+          <div class="relative h-48 bg-gray-900 flex items-center
+                      justify-center border-b border-gray-800">
+            <span class="text-6xl opacity-20">🎬</span>
+
+            @if (movie.cbfc) {
+              <span
+                [ngClass]="{
+                  'bg-green-500 text-white':  movie.cbfc === 'U',
+                  'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                  'bg-red-500 text-white':    movie.cbfc === 'A',
+                  'bg-blue-500 text-white':   movie.cbfc === 'S'
+                }"
+                class="absolute top-2 left-2 text-xs font-bold
+                       px-2 py-0.5 rounded">
+                {{ movie.cbfc }}
+              </span>
+            }
+
+            <h3 class="absolute bottom-2 left-3 font-bold text-white
+                       text-sm line-clamp-1 max-w-[70%]">
+              {{ movie.title }}
+            </h3>
+          </div>
+        }
+
+        <!-- Card Details -->
+        <div class="px-4 pt-3 pb-1 space-y-2">
+
+          <!-- Language -->
+          @if (movie.language) {
+            <div class="flex items-center gap-2 text-sm text-gray-300">
+              <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
+                   stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0
+                         016.412 9m6.088 9h7M11 21l5-10 5
+                         10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+              </svg>
+              <span class="truncate">{{ movie.language }}</span>
+            </div>
+          }
+
+          <!-- Genre -->
+          <div class="flex items-center gap-2 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
+                 stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10
+                       0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1
+                       1 0 00-1 1v14a1 1 0 001 1z"/>
+            </svg>
+            <span class="truncate">{{ movie.genre }}</span>
+          </div>
+
+          <!-- Duration -->
+          <div class="flex items-center gap-2 text-sm text-gray-300">
+            <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none"
+                 stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke-width="2"/>
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="M12 6v6l4 2"/>
+            </svg>
+            <span>{{ movie.duration | duration }}</span>
           </div>
 
         </div>
+
+        <!-- Book Now -->
+        <div class="px-4 py-3 mt-1 border-t border-gray-800">
+          <button
+            (click)="navigateToBooking(movie.movieId)"
+            class="btn-gold w-full py-2 text-sm rounded-lg">
+            Book Now
+          </button>
+        </div>
+
       </div>
     }
   </div>

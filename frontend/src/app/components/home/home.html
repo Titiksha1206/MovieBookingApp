@@ -2,7 +2,7 @@
 
   <!-- Background layers -->
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--color-gold-500)_6%,transparent),transparent)]"></div>
-  <div class="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[color:var(--color-cinema-900)] to-transparent"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-64 bg-linear-to-t from-cinema-900 to-transparent"></div>
 
   <!-- Film strip left -->
   <div class="absolute left-0 top-0 bottom-0 w-6 opacity-[0.06] flex flex-col justify-around py-2">
@@ -15,11 +15,11 @@
   <div class="max-w-5xl mx-auto px-8 text-center relative z-10">
 
     <div class="inline-flex items-center gap-2 badge-gold mb-8 py-2 px-5">
-      <span class="w-1.5 h-1.5 rounded-full bg-[color:var(--color-gold-400)] animate-pulse"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span>
    Book movies in seconds ⭐
     </div>
 
-    <h1 class="font-[family-name:var(--font-display)] text-6xl md:text-8xl font-black text-white leading-[1.05] mb-6 tracking-tight">
+    <h1 class="font-display text-6xl md:text-8xl font-black text-white leading-[1.05] mb-6 tracking-tight">
       Your Ultimate<br>
       <span class="text-transparent bg-clip-text
                    bg-[linear-gradient(135deg,var(--color-gold-400),#ef4444)]">
@@ -32,18 +32,23 @@
     </p>
 
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a routerLink="/user/view/Movies" class="btn-gold px-10 py-3.5 text-base rounded-xl">
-        🎟 Browse Movies
-      </a>
-      <a routerLink="/register" class="btn-outline px-10 py-3.5 text-base rounded-xl">
-        Create Account
-      </a>
-    </div>
+
+  @if (!isLoggedIn) {
+    <a routerLink="/user/view/Movies" class="btn-gold px-10 py-3.5 text-base rounded-xl">
+      🎟 Browse Movies
+    </a>
+
+    <a routerLink="/register" class="btn-outline px-10 py-3.5 text-base rounded-xl">
+      Create Account
+    </a>
+  }
+
+</div>
 
     <div class="mt-20 inline-flex divide-x divide-gray-800 border border-gray-800 rounded-2xl overflow-hidden">
       <div *ngFor="let stat of [{value:'100+', label:'Movies'},{value:'50K+', label:'Bookings'},{value:'4.9★', label:'Rating'}]"
            class="px-8 py-5 text-center">
-        <div class="font-[family-name:var(--font-display)] text-2xl font-bold text-[color:var(--color-gold-400)]">
+        <div class="font-display text-2xl font-bold text-gold-400">
           {{ stat.value }}
         </div>
         <div class="text-xs text-gray-600 uppercase tracking-widest mt-1">{{ stat.label }}</div>
@@ -55,7 +60,7 @@
  <!-- Divider -->
   <!-- <div class="border-t border-gray-800"></div> -->
 
-<footer class="bg-[color:var(--color-cinema-950)] border-t border-gray-800 mt-2.5">
+<footer class="bg-cinema-950 border-t border-gray-800 mt-2.5">
 
   <!-- Top section -->
   <div class="max-w-7xl mx-auto px-8 py-10 
@@ -68,8 +73,8 @@
     <!-- Logo -->
     <div class="flex items-center gap-2">
       <span class="text-2xl">🎬</span>
-      <span class="font-[family-name:var(--font-display)] text-lg font-bold
-                   text-[color:var(--color-gold-400)] uppercase tracking-widest">
+      <span class="font-display text-lg font-bold
+                   text-gold-400 uppercase tracking-widest">
         SnemaTix
       </span>
     </div>
@@ -106,7 +111,7 @@
     </p>
 
     <!-- Social icons -->
-    <div class="flex items-center gap-4 flex-shrink-0">
+    <div class="flex items-center gap-4 shrink-0">
 
       <!-- WhatsApp -->
       <a href="#" class="text-gray-600 hover:text-white transition-colors">
