@@ -66,6 +66,10 @@ public class BookingServiceImpl implements BookingService {
         // List<Seat> seats = seatRepo.findAllById(bookingDto.getSeatIds());
         List<Seat> seats = seatRepo.findAllByIdWithLock(bookingDto.getSeatIds());
 
+        if (seats.size() != bookingDto.getSeatIds().size()) {
+            throw new RuntimeException("Some seat IDs are invalid.");
+        }
+
         // 3. 🔍 Check each seat – is it already booked for this showtime?
         for (Seat seat : seats) {
             boolean alreadyBooked = bookingRepo.existsActiveBookingForSeatAndShowtime(
@@ -114,6 +118,62 @@ public class BookingServiceImpl implements BookingService {
 
         if (bookingDto.getSeatCount() <= 0) {
             throw new InsufficientSeatCountException("Invalid seat count");
+        }
+
+        // 3. If seatIds are provided, update the seat list
+        if (bookingDto.getSeatIds() != null && !bookingDto.getSeatIds().isEmpty()) {
+            // 3a. Validate showtime (from existing booking)
+            Long showtimeId = existing.getShowtime().getShowtimeId();
+
+            // 3b. Lock and fetch new seats
+            List<Seat> newSeats = seatRepo.findAllByIdWithLock(bookingDto.getSeatIds());
+
+            if (newSeats.size() != bookingDto.getSeatIds().size()) {
+                throw new IllegalArgumentException("Some seat IDs are invalid.");
+            }
+
+            // 3c. Check each new seat is AVAILABLE and not already booked in another active
+            // booking (excluding this booking)
+            for (Seat seat : newSeats) {
+                if (!"AVAILABLE".equals(seat.getStatus())) {
+                    throw new SeatAlreadyBookedException(
+                            "Seat " + seat.getRowLabel() + seat.getSeatNumber() + " is not available.");
+                }
+                boolean alreadyBooked = bookingRepo.existsActiveBookingForSeatAndShowtime(seat.getSeatId(), showtimeId);
+                // Exclude current booking ID from the check? The query already counts all
+                // bookings with status != CANCELLED.
+                // If this seat is already in this same booking (but the bookingDto includes
+                // same seatIds), we should skip.
+                // But since we are comparing with existing seats later, we need to allow the
+                // seat if it's already in this booking.
+                // Simpler: check if the seat is occupied by any other active booking (different
+                // bookingId)
+                if (alreadyBooked) {
+                    // Check if the existing booking already has this seat
+                    boolean alreadyHasSeat = existing.getSeats().stream()
+                            .anyMatch(s -> s.getSeatId().equals(seat.getSeatId()));
+                    if (!alreadyHasSeat) {
+                        throw new SeatAlreadyBookedException("Seat " + seat.getRowLabel() + seat.getSeatNumber()
+                                + " is already taken by another booking.");
+                    }
+                }
+            }
+
+            // 3d. Release old seats (set AVAILABLE)
+            List<Seat> oldSeats = existing.getSeats();
+            for (Seat seat : oldSeats) {
+                seat.setStatus("AVAILABLE");
+            }
+            seatRepo.saveAll(oldSeats);
+
+            // 3e. Set new seats as BOOKED
+            for (Seat seat : newSeats) {
+                seat.setStatus("BOOKED");
+            }
+            seatRepo.saveAll(newSeats);
+
+            // 3f. Update the booking's seat list
+            existing.setSeats(newSeats);
         }
 
         existing.setSeatCount(bookingDto.getSeatCount());

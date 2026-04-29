@@ -39,13 +39,15 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .orElseThrow(() -> new MovieNotFoundException(
                         "Movie not found with id: " + movieId));
 
-        if (showtimeRepo.existsByTheaterAndShowDateAndShowTime(
+        if (showtimeRepo.existsByMovie_MovieIdAndTheaterAndShowDateAndShowTime(
+                movieId,
                 showtime.getTheater(),
                 showtime.getShowDate(),
                 showtime.getShowTime())) {
             throw new DuplicateShowtimeException(
-                    "Showtime already exists at " + showtime.getTheater() +
-                            " on " + showtime.getShowDate() + " at " + showtime.getShowTime());
+                    "Showtime already exists for movie '" + movie.getTitle() +
+            "' at " + showtime.getTheater() + " on " + showtime.getShowDate() +
+            " at " + showtime.getShowTime());
         }
         showtime.setMovie(movie);
         showtime.setAvailableSeats(showtime.getTotalSeats());
@@ -75,21 +77,24 @@ public class ShowtimeServiceImpl implements ShowtimeService {
         ShowTime existing = showtimeRepo.findById(showId)
                 .orElseThrow(() -> new ShowtimeNotFoundException(
                         "Showtime not found with id: " + showId));
-
+        Long movieId = existing.getMovie().getMovieId();
         // Check if updating to a theater/date/time that conflicts with another showtime
-        boolean conflict = showtimeRepo.existsByTheaterAndShowDateAndShowTime(
+        boolean conflict = showtimeRepo.existsByMovie_MovieIdAndTheaterAndShowDateAndShowTime(
+                movieId,
                 showtime.getTheater(),
                 showtime.getShowDate(),
                 showtime.getShowTime());
 
         if (conflict) {
-            Optional<ShowTime> conflicting = showtimeRepo.findByTheaterAndShowDateAndShowTime(
+            Optional<ShowTime> conflicting = showtimeRepo.findByMovie_MovieIdAndTheaterAndShowDateAndShowTime(
+                    movieId,
                     showtime.getTheater(),
                     showtime.getShowDate(),
                     showtime.getShowTime());
             if (conflicting.isPresent() && conflicting.get().getShowtimeId() != showId) {
                 throw new DuplicateShowtimeException(
-                        "Another showtime already exists at " + showtime.getTheater() +
+                        "Another showtime already exists for movie '" + existing.getMovie().getTitle() +
+                                "' at " + showtime.getTheater() +
                                 " on " + showtime.getShowDate() + " at " + showtime.getShowTime());
             }
         }
