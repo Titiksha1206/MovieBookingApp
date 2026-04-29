@@ -1,85 +1,150 @@
-<!-- <h2>All Bookings</h2>
-<table>
-  <thead>
-    <tr>
-      <th>UserName</th>
-      <th>Movie Title</th>
-      <th>Genre</th>
-      <th>Duration (min)</th>
-      <th>Seats Booked</th>
-      <th>Total Cost ($)</th>
-    </tr>
-  </thead>
+<div class="max-w-2xl mx-auto px-4 py-10">
 
-  <tbody>
-    @for (booking of bookings; track booking.bookingId) {
-      <tr>
-        <td>{{ booking.user.username }}</td>
-        <td>{{ booking.movie.title }}</td>
-        <td>{{ booking.movie.genre }}</td>
-        <td>{{ booking.movie.duration }}</td>
-        <td>{{ booking.seatCount }}</td>
-        <td>{{ booking.totalCost }}</td>
-      </tr>
-    }
-  </tbody>
-</table> -->
-<div class="max-w-6xl mx-auto px-6 py-10">
-
+  <!-- Header -->
   <div class="flex items-center justify-between mb-8">
     <div>
-      <h2 class="font-[family-name:var(--font-display)] text-2xl font-bold text-white">
+      <h2 class="font-display text-2xl font-bold text-white">
         All Bookings
       </h2>
-      <p class="text-gray-500 text-sm mt-1">{{ bookings.length }} total bookings</p>
+      <p class="text-gray-500 text-sm mt-1">{{ bookings.length }} booking(s)</p>
     </div>
-    <span class="badge-gold py-2 px-4">Admin View</span>
+    <span class="badge-gold py-2 px-4 text-sm font-semibold">Admin View</span>
   </div>
 
-  <div class="card overflow-hidden">
-    <table class="cinema-table">
-      <thead>
-        <tr>
-          <th>Customer</th>
-          <th>Movie Title</th>
-          <th>Genre</th>
-          <th>Duration</th>
-          <th>Seats</th>
-          <th>Total</th>
-        </tr>
-      </thead>
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="text-center py-20 text-gray-500">
+      <div class="text-4xl mb-3 animate-pulse">🎬</div>
+      <p>Loading bookings...</p>
+    </div>
+  }
 
-      <tbody>
+  <!-- Error -->
+  @if (!isLoading && errorMessage) {
+    <div class="bg-red-900/30 border border-red-500 rounded-xl p-6 text-red-300 text-center">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Bookings Grid -->
+  @if (!isLoading && !errorMessage) {
+    @if (bookings.length === 0) {
+      <div class="text-center py-24">
+        <div class="text-5xl mb-3">📋</div>
+        <p class="text-gray-600">No bookings yet.</p>
+      </div>
+    } @else {
+      <div class="space-y-5">
         @for (booking of bookings; track booking.bookingId) {
-          <tr>
-            <td>
-              <div class="flex items-center gap-2.5">
-                <div class="avatar">
-                  {{ booking.user.username[0]?.toUpperCase() }}
-                </div>
-                <span class="text-gray-200">{{ booking.user.username }}</span>
+          <div class="card p-5 hover:border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)] transition-all duration-300">
+
+            <!-- Customer Info (Admin only) -->
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-gray-800">
+              <div class="avatar w-10 h-10 text-sm">
+                {{ booking.user.username[0]?.toUpperCase() || '?' }}
               </div>
-            </td>
-            <td class="font-medium text-white">{{ booking.movie.title }}</td>
-            <td><span class="badge">{{ booking.movie.genre }}</span></td>
-            <td class="text-gray-500">{{ booking.movie.duration }} min</td>
-            <td class="text-gray-200 font-semibold">{{ booking.seatCount }}</td>
-            <td class="text-[color:var(--color-gold-400)] font-bold">
-              ₹{{ booking.totalCost }}
-            </td>
-          </tr>
-        }
+              <div>
+                <p class="text-white font-medium">{{ booking.user.username || 'Unknown User' }}</p>
+                <p class="text-gray-500 text-xs">{{ booking.user.email || 'No email' }}</p>
+              </div>
+            </div>
 
-        @if (bookings.length === 0) {
-          <tr>
-            <td colspan="6" class="text-center py-16 text-gray-600">
-              <div class="text-5xl mb-3">📋</div>
-              <div>No bookings found</div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+            <!-- Movie Info Card -->
+            @if (booking.movie) {
+              <div class="flex items-start gap-4 mb-4">
+                @if (booking.movie.imageUrl) {
+                  <img [src]="booking.movie.imageUrl" [alt]="booking.movie.title"
+                       class="w-16 h-24 object-cover rounded-xl shrink-0 border border-gray-700">
+                } @else {
+                  <div class="w-16 h-24 rounded-xl bg-gray-800 flex items-center justify-center text-3xl shrink-0 border border-gray-700">
+                    🎬
+                  </div>
+                }
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-display text-xl font-bold text-white truncate">
+                    {{ booking.movie.title }}
+                  </h3>
+                  <div class="flex items-center gap-2 mt-1 flex-wrap">
+                    @if (booking.movie.cbfc) {
+                      <span class="text-xs font-bold px-2 py-0.5 rounded"
+                            [ngClass]="{
+                              'bg-green-500 text-white':  booking.movie.cbfc === 'U',
+                              'bg-yellow-500 text-black': booking.movie.cbfc === 'U/A',
+                              'bg-red-500 text-white':    booking.movie.cbfc === 'A',
+                              'bg-blue-500 text-white':   booking.movie.cbfc === 'S'
+                            }">
+                        {{ booking.movie.cbfc }}
+                      </span>
+                    }
+                    @if (booking.movie.language) {
+                      <span class="text-xs text-gray-500 flex items-center gap-1">
+                        🗣 {{ booking.movie.language }}
+                      </span>
+                    }
+                    <div class="flex items-center gap-1 text-gray-500">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/>
+                      </svg>
+                      <span class="text-xs">{{ booking.movie.duration | duration}} </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
 
+            <!-- Showtime & Booking Details -->
+            @if (booking.showtime) {
+              <div class="mb-3">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Showtime</p>
+                <p class="text-gray-300 text-sm">
+                  📅 {{ booking.showtime.showDate }} · 🕒 {{ booking.showtime.showTime }}<br>
+                  🎭 {{ booking.showtime.theater }}
+                </p>
+              </div>
+            }
+
+            <!-- Seats & Total -->
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Seats</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @if (booking.seats && booking.seats.length > 0) {
+                    @for (seat of booking.seats; track seat.seatId) {
+                      <span class="text-xs px-2 py-0.5 rounded-md
+                                   bg-[color-mix(in_srgb,var(--color-gold-500)_12%,transparent)]
+                                   border border-[color-mix(in_srgb,var(--color-gold-500)_25%,transparent)]
+                                   text-gold-400 font-semibold">
+                        {{ seat.rowLabel }}{{ seat.seatNumber }}
+                      </span>
+                    }
+                  } @else {
+                    <span class="text-xs text-gray-500">{{ booking.seatCount || 0 }} seat(s)</span>
+                  }
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total</p>
+                <p class="text-gold-400 font-bold text-xl">
+                  ₹{{ booking.totalCost || 0 }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Status & Cancel Action -->
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                           bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                {{ booking.status === 'CANCELLED' ? 'Cancelled' : 'Confirmed' }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <div class="h-4"></div>
 </div>

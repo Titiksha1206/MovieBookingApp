@@ -14,6 +14,7 @@ export class Userviewbooking implements OnInit{
   bookings : Booking[] = [];
   userId!: number;
   errorMessage : string = '';
+  isLoading = true;
  
   constructor(
     private bookingService : BookingService,
@@ -38,14 +39,18 @@ export class Userviewbooking implements OnInit{
   }
 }
   loadUserBookings(){
+    this.isLoading = true;
     this.bookingService.getUserBookings(this.userId).subscribe({
        next : (data : Booking[])=> {
             this.bookings = data;
+            this.isLoading = false;
             console.log(JSON.stringify(data));
        } ,
        error : (err) => {
         console.log(err);
         alert("Failed to load the bookings");
+        this.errorMessage = err.error?.message || 'Failed to load bookings';
+        this.isLoading = false;
        }
     });
   }

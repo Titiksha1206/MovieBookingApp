@@ -105,26 +105,29 @@ export class Userseatselection  implements OnInit {
   }
 
   registerBooking(): void {
-    if (this.selectedSeats.length === 0) {
-      alert('Please select at least one seat');
-      return;
-    }
-
-    const booking: any = {
-      seatCount: this.selectedSeats.length,
-      totalCost: this.totalCost,
-      seatIds: this.selectedSeats.map(s => s.seatId) 
-    };
-    console.log("Booking Payload:", booking);
-
-    this.bookingService.addBooking(
-      booking, this.movieId, this.userId
-    ).subscribe({
-      next : () => this.router.navigate(['/user/view/Mybookings']),
-      error: ()  => alert('Booking Failed')
-    });
+  if (this.selectedSeats.length === 0) {
+    alert('Please select at least one seat');
+    return;
   }
 
+  const booking: any = {
+    seatCount: this.selectedSeats.length,
+    totalCost: this.totalCost,
+    seatIds: this.selectedSeats.map(s => s.seatId),
+    showtimeId: this.showtimeId
+  };
+  console.log("Booking Payload:", booking);
+
+  this.bookingService.addBooking(booking, this.movieId, this.userId).subscribe({
+    next: () => this.router.navigate(['/user/view/Mybookings']),
+    error: (err) => {
+      console.error('Booking failed:', err);
+      // Show server error message if available
+      const errorMsg = err.error?.message || err.message || 'Booking Failed';
+      alert(`Booking Failed: ${errorMsg}`);
+    }
+  });
+}
   getCategoryIcon(name: string): string {
     const icons: any = {
       'Classic'  : '🪑',

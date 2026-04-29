@@ -19,8 +19,8 @@
 
     <!-- Screen -->
     <div class="mb-10 text-center">
-      <div class="w-3/4 mx-auto h-2 bg-gradient-to-r
-                  from-transparent via-[color:var(--color-gold-500)]
+      <div class="w-3/4 mx-auto h-2 bg-linear-to-r
+                  from-transparent via-gold-500
                   to-transparent rounded-full mb-3 opacity-80">
       </div>
       <p class="text-xs text-gray-600 uppercase tracking-[0.25em]">
@@ -53,7 +53,7 @@
             </span>
           </div>
           <div class="flex items-center gap-3">
-            <span class="text-[color:var(--color-gold-400)] font-bold">
+            <span class="text-gold-400 font-bold">
               ₹{{ category.price }}
             </span>
             <span class="text-xs text-gray-500">
@@ -69,18 +69,18 @@
 
               <!-- Row Label -->
               <span class="text-xs text-gray-600 font-mono w-5
-                           text-right flex-shrink-0">
+                           text-right shrink-0">
                 {{ row.rowLabel }}
               </span>
 
-              <div class="w-2 flex-shrink-0"></div>
+              <div class="w-2 shrink-0"></div>
 
               <!-- Seats with aisles -->
               <div class="flex gap-1.5">
                 @for (seat of row.seats; track seat.seatId) {
 
                   @if (showAisle(seat.seatNumber)) {
-                    <div class="w-4 flex-shrink-0"></div>
+                    <div class="w-4 shrink-0"></div>
                   }
 
                   <button
@@ -96,7 +96,7 @@
                         seat.status === 'AVAILABLE' && !isSeatSelected(seat.seatId)
                     }"
                     class="w-8 h-8 rounded-lg border text-xs font-semibold
-                           transition-all duration-150 flex-shrink-0
+                           transition-all duration-150 shrink-0
                            flex items-center justify-center">
                     {{ seat.seatNumber }}
                   </button>
@@ -122,8 +122,8 @@
         <span class="text-xs text-gray-500">Available</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-[color:var(--color-gold-500)]
-                    border border-[color:var(--color-gold-600)]"></div>
+        <div class="w-7 h-7 rounded-lg bg-gold-500
+                    border border-gold-600"></div>
         <span class="text-xs text-gray-500">Selected</span>
       </div>
       <div class="flex items-center gap-2">
@@ -138,7 +138,7 @@
   <!-- ── Sticky Bottom Summary ── -->
   @if (selectedSeats.length > 0) {
     <div class="fixed bottom-0 left-0 right-0 z-50
-                bg-[color:var(--color-cinema-900)] border-t border-gray-800
+                bg-cinema-900 border-t border-gray-800
                 px-4 py-4 shadow-2xl">
       <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
 
@@ -149,7 +149,7 @@
               <span class="text-xs px-2 py-0.5 rounded-md
                            bg-[color-mix(in_srgb,var(--color-gold-500)_12%,transparent)]
                            border border-[color-mix(in_srgb,var(--color-gold-500)_25%,transparent)]
-                           text-[color:var(--color-gold-400)] font-semibold">
+                           text-gold-400 font-semibold">
                 {{ seat.rowLabel }}{{ seat.seatNumber }}
               </span>
             }
@@ -160,10 +160,10 @@
         </div>
 
         <!-- Right: total + confirm -->
-        <div class="flex items-center gap-4 flex-shrink-0">
+        <div class="flex items-center gap-4 shrink-0">
           <div class="text-right">
             <p class="text-xs text-gray-500">Total</p>
-            <p class="text-xl font-black text-[color:var(--color-gold-400)]">
+            <p class="text-xl font-black text-gold-400">
               ₹{{ totalCost }}
             </p>
           </div>

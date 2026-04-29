@@ -1,38 +1,4 @@
-<!-- <h2>Your Bookings</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>Movie Title</th>
-      <th>Genre</th>
-      <th>Duration (min)</th>
-      <th>Seats Booked</th>
-      <th>Total Cost ($)</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @for (booking of bookings; track booking.bookingId) {
-      <tr>
-        <td>{{ booking.movie.title }}</td>
-        <td>{{ booking.movie.genre }}</td>
-        <td>{{ booking.movie.duration }}</td>
-        <td>{{ booking.seatCount }}</td>
-        <td>{{ booking.totalCost }}</td>
-        <td>
-          <button
-            class="btn"
-            (click)="cancleBooking(booking.bookingId)">
-            Cancel Ticket
-          </button>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table> -->
-<div class="max-w-5xl mx-auto px-6 py-10">
-
+<div class="max-w-2xl mx-auto px-4 py-10">
   <div class="flex items-center justify-between mb-8">
     <div>
       <h2 class="font-display text-2xl font-bold text-white">
@@ -45,66 +11,185 @@
     </a>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (booking of bookings; track booking.bookingId) {
-      <div class="card overflow-hidden
-                  hover:border-[color-mix(in_srgb,var(--color-gold-500)_30%,transparent)]
-                  transition-all duration-300">
-
-        <!-- Red top accent bar -->
-        <div class="h-1.5 bg-red-600"></div>
-
-        <div class="p-5">
-
-          <!-- Movie title -->
-          <h3 class="font-semibold text-white text-base mt-3 mb-1 line-clamp-1">
-            {{ booking?.movie?.title }}
-          </h3>
-          
-          <!-- Duration -->
-          <div class="text-xs text-gray-500 mb-3">
-            ⏱ {{ booking?.movie?.duration }} min
-          </div>
-
-          
-
-          <!-- Seats + Total -->
-          <div class="bg-gray-800/50 rounded-lg p-3 space-y-1.5 mb-4
-                      border border-gray-700/40">
-            <div class="flex justify-between text-xs">
-              <span class="text-gray-500">Seats Booked</span>
-              <span class="text-gray-200 font-semibold">{{ booking?.seatCount }}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-              <span class="text-gray-500">Total Paid</span>
-              <span class="text-gold-400 font-bold text-sm">
-                ₹{{ booking?.totalCost }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Cancel button -->
-          <button
-            (click)="cancleBooking(booking.bookingId)"
-            class="btn-ghost-red w-full text-center">
-            Cancel Ticket
-          </button>
-
-        </div>
-      </div>
-    }
-  </div>
-
-  @if (bookings.length === 0) {
-    <div class="text-center py-24">
-      <div class="text-5xl mb-3">🎟</div>
-      <p class="text-gray-600">No bookings yet.</p>
-      <a routerLink="/user/view/Movies"
-         class="inline-block mt-3 text-gold-400
-                hover:text-(--color-gold-300) text-sm transition-colors">
-        Browse Movies →
-      </a>
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="text-center py-20 text-gray-500">
+      <div class="text-4xl mb-3 animate-pulse">🎬</div>
+      <p>Loading your bookings...</p>
     </div>
   }
 
+  <!-- Error State -->
+  @if (!isLoading && errorMessage) {
+    <div class="bg-red-900/30 border border-red-500 rounded-xl p-6 text-red-300 text-center">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Bookings List -->
+  @if (!isLoading && !errorMessage) {
+    <div class="space-y-4">
+      @for (booking of bookings; track booking.bookingId) {
+        <div
+          class="card p-5 hover:border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)] transition-all duration-300"
+        >
+          <!-- Top Row: Info left, Poster right -->
+          <div class="flex items-start justify-between gap-4">
+            <!-- Left -->
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-white text-lg leading-tight mb-1 truncate">
+                {{ booking.movie.title }}
+              </h3>
+
+              <!-- ✅ Date + Time from showtime object -->
+              @if (booking.showtime?.showDate || booking.showtime?.showTime) {
+                <p class="text-gray-400 text-sm mb-0.5">
+                  {{ booking.showtime?.showDate }} | {{ booking.showtime?.showTime }}
+                </p>
+              }
+
+              <p class="text-gray-500 text-sm mb-3">
+                {{ booking?.seatCount ?? 0 }} ticket{{ (booking?.seatCount ?? 0) > 1 ? 's' : '' }}
+              </p>
+
+              <!-- Genre + Duration -->
+              <!-- <div class="flex items-center gap-2 flex-wrap">
+                @if (booking.movie.genre) {
+                  <span class="badge">{{ booking.movie.genre }}</span>
+                }
+                <span class="text-xs text-gray-600">
+                  {{ booking.movie.duration | duration }} 
+                </span>
+              </div> -->
+
+              <div class="flex items-center gap-2 mt-1 flex-wrap">
+                @if (booking.movie.cbfc) {
+                  <span
+                    class="text-xs font-bold px-2 py-0.5 rounded"
+                    [ngClass]="{
+                      'bg-green-500 text-white': booking.movie.cbfc === 'U',
+                      'bg-yellow-500 text-black': booking.movie.cbfc === 'U/A',
+                      'bg-red-500 text-white': booking.movie.cbfc === 'A',
+                      'bg-blue-500 text-white': booking.movie.cbfc === 'S',
+                    }"
+                  >
+                    {{ booking.movie.cbfc }}
+                  </span>
+                }
+                @if (booking.movie.language) {
+                  <span class="text-xs text-gray-500">🗣 {{ booking.movie.language }}</span>
+                }
+                <!-- Duration -->
+                <div class="flex items-center gap-1 text-gray-500">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke-width="2" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6l4 2"
+                    />
+                  </svg>
+                  <span class="text-xs">{{ booking.movie.duration | duration }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Poster -->
+            @if (booking.movie.imageUrl) {
+              <img
+                [src]="booking.movie.imageUrl"
+                [alt]="booking.movie.title"
+                class="w-20 h-24 object-cover rounded-xl shrink-0 border border-gray-700"
+              />
+            } @else {
+              <div
+                class="w-20 h-24 rounded-xl bg-gray-800 flex items-center justify-center text-3xl shrink-0 border border-gray-700"
+              >
+                🎬
+              </div>
+            }
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-gray-800 my-4"></div>
+
+          <!-- Theater from showtime object -->
+          @if (booking.showtime?.theater) {
+            <div class="mb-3">
+              <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Location</p>
+              <div class="flex items-center justify-between">
+                <p class="text-gray-300 text-sm font-medium">
+                  {{ booking.showtime.theater }}
+                </p>
+                <span class="text-gray-600 text-lg ml-2">◈</span>
+              </div>
+            </div>
+            <div class="border-t border-gray-800 my-4"></div>
+          }
+
+          <div class="flex items-center justify-between mb-4">
+            <!-- Seats labels (left) -->
+            <div>
+              <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Seats</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (seat of booking.seats; track seat.seatId) {
+                  <span
+                    class="text-xs px-2 py-0.5 rounded-md bg-[color-mix(in_srgb,var(--color-gold-500)_12%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_25%,transparent)] text-gold-400 font-semibold"
+                  >
+                    {{ seat.rowLabel }}{{ seat.seatNumber }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Total cost (right) -->
+            <div class="text-right">
+              <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total</p>
+              <p class="text-gold-400 font-bold text-xl">
+                ₹{{ booking.totalCost }}
+              </p>
+            </div>
+          </div>
+          <!-- Bottom Row: Status + Cancel -->
+          <div class="flex items-center justify-between">
+            <!-- Status badge (based on backend 'status' field) -->
+            <span
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+              {{ booking.status === 'CANCELLED' ? 'Cancelled' : 'Confirmed' }}
+            </span>
+
+            <!-- Cancel button – only if not already cancelled -->
+            @if (booking.status !== 'CANCELLED') {
+              <button
+                (click)="cancleBooking(booking.bookingId)"
+                class="text-sm text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1"
+              >
+                Cancel ticket →
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (bookings.length === 0) {
+      <div class="text-center py-24">
+        <div class="text-5xl mb-3">🎟</div>
+        <p class="text-gray-600">No bookings yet.</p>
+        <a
+          routerLink="/user/view/Movies"
+          class="inline-block mt-3 text-gold-400 hover:text-(--color-gold-300) text-sm transition-colors"
+        >
+          Browse Movies →
+        </a>
+      </div>
+    }
+  }
+
+  <!-- Spacer for fixed bottom bar (if any) -->
+  <div class="h-4"></div>
 </div>

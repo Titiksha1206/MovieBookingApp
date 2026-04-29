@@ -11,6 +11,7 @@ import { Booking } from '../../models/booking';
 export class Adminviewbooking{
   bookings: Booking[] = [];
   errorMessage: string = '';
+  isLoading = true;
 
   constructor(
     private bookingService: BookingService
@@ -21,15 +22,18 @@ export class Adminviewbooking{
   }
 
   loadBookings() {
+    this.isLoading = true;
     this.bookingService.getAllBookings().subscribe({
       next: (data) => {
         this.bookings = data;
+         this.isLoading = false;
         console.log(JSON.stringify(data));
       },
       error: (err) => {
         console.error(err);
         this.errorMessage = 'Failed to load bookings';
         alert('Failed to load the Booking');
+        this.isLoading = false;
       }
     });
   }

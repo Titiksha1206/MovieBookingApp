@@ -6,6 +6,9 @@ export interface Booking {
   bookingId: number;
   seatCount?: number;
   totalCost: number;
+  status: string;
   movie: Movie;
   user: User;
+  seats: any[]; 
+  showtime: any;
 }
