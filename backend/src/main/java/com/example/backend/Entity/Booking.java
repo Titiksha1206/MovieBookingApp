@@ -3,7 +3,6 @@ package com.example.backend.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -56,7 +55,6 @@ public class Booking {
    @ManyToOne
    @JoinColumn(name = "userId")
    // @JsonBackReference("user-booking")
-   @JsonIgnore
    private User user;
 
    @ManyToMany
