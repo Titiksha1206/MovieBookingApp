@@ -2,6 +2,7 @@ package com.example.backend.Service;
 
 import java.util.List;
 
+import com.example.backend.Entity.SeatCategoryResponseDto;
 import com.example.backend.Entity.ShowTime;
 
 public interface ShowtimeService {
@@ -12,4 +13,7 @@ public interface ShowtimeService {
     List<ShowTime> getShowtimesByDate(long movieId, String date);
     boolean deleteShowtimeById(long showId);
     List<ShowTime> getShowtimesByMovie(long movieId);
+    // List<SeatCategory> getSeatsByShowtime(long showtimeId);
+    // List<Seat> getAllSeatsByShowtime(long showtimeId);
+    List<SeatCategoryResponseDto> getSeatCategoriesByShowtime(long showtimeId);
 }

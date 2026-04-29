@@ -13,4 +13,5 @@ public interface MovieService {
     Movie getMovieById(long movieId);
     boolean deleteMovieById(long movieId);
     List<Booking> findAllBookingsByMovie(long movieId);
+    List<Movie> searchMoviesByTitle(String title);
 }

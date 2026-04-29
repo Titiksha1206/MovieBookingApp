@@ -14,5 +14,5 @@ public class LoginAuthenticationDto {
    private String token;
    private String username;
    private String userRole;
-   private int userId;
+   private Long userId;
 }

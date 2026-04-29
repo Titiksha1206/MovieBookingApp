@@ -2,8 +2,10 @@ package com.example.backend.Controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,68 +31,94 @@ public class UserController {
   private final JwtUtils jwtUtils;
   private final UserDetailsService userDetailsService;
 
-    public UserController(UserService userService,
-                          AuthenticationManager manager,
-                          JwtUtils jwtUtils,
-                          UserDetailsService userDetailsService) {
-        this.userService = userService;
-        this.manager = manager;
-        this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
-    }
-    
- // 🔍 Flow:
- // Client sends:
- // {
- //   "username": "abc",
- //   "password": "123"
- // }
- // Controller receives
- // Calls service
- // Password encoded (BCrypt)
- // Saved in DB
-    @PostMapping("/register")
-    public ResponseEntity<User> addUser(@RequestBody RegisterDto userDto){
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setMobileNumber(userDto.getMobileNumber());
-        user.setUserRole(userDto.getUserRole());
-        return ResponseEntity.status(201).body(userService.registerUser(user));
-    }
+  public UserController(UserService userService,
+      AuthenticationManager manager,
+      JwtUtils jwtUtils,
+      UserDetailsService userDetailsService) {
+    this.userService = userService;
+    this.manager = manager;
+    this.jwtUtils = jwtUtils;
+    this.userDetailsService = userDetailsService;
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto){
-        
-      // 👉 Spring internally:
-                              //fetches user
-                              //compares password (BCrypt)
-                              //throws exception if wrong
-      Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(
-        userDto.getUsername(),
-        userDto.getPassword()
-      ));
+  // 🔍 Flow:
+  // Client sends:
+  // {
+  // "username": "abc",
+  // "password": "123"
+  // }
+  // Controller receives
+  // Calls service
+  // Password encoded (BCrypt)
+  // Saved in DB
 
-      // 👉 Loads user again (for token generation)
-      UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
+  @PostMapping("/register")
+  public ResponseEntity<User> addUser(@RequestBody RegisterDto userDto) {
+    User user = new User();
+    user.setUsername(userDto.getUsername());
+    user.setEmail(userDto.getEmail());
+    user.setPassword(userDto.getPassword());
+    user.setMobileNumber(userDto.getMobileNumber());
+    user.setUserRole(userDto.getUserRole());
+    return ResponseEntity.status(201).body(userService.registerUser(user));
+  }
 
-      if(authentication.isAuthenticated()) { // 👉 If authentication successful, generate token and return user details
+  // @PostMapping("/login")
+  // public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+
+  // // 👉 Spring internally:
+  // // fetches user
+  // // compares password (BCrypt)
+  // // throws exception if wrong
+  // Authentication authentication = manager.authenticate(new
+  // UsernamePasswordAuthenticationToken(
+  // userDto.getUsername(),
+  // userDto.getPassword()));
+
+  // // 👉 Loads user again (for token generation)
+  // UserDetails userDetails =
+  // userDetailsService.loadUserByUsername(userDto.getUsername());
+
+  // if (authentication.isAuthenticated()) { // 👉 If authentication successful,
+  // generate token and return user details
+  // User user = userService.findByUsername(userDto.getUsername());
+  // LoginAuthenticationDto data = new LoginAuthenticationDto();
+  // data.setToken(jwtUtils.generateToken(userDetails));
+  // data.setUsername(user.getUsername());
+  // data.setUserRole(user.getUserRole());
+  // data.setUserId(user.getUserId());
+  // return ResponseEntity.status(200).body(data);
+  // } else
+  // return ResponseEntity.status(404).body("Not Found");
+  // }
+
+  @PostMapping("/login")
+  public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+    try {
+      Authentication authentication = manager.authenticate(
+          new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
+
+      if (authentication.isAuthenticated()) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
         User user = userService.findByUsername(userDto.getUsername());
         LoginAuthenticationDto data = new LoginAuthenticationDto();
         data.setToken(jwtUtils.generateToken(userDetails));
         data.setUsername(user.getUsername());
         data.setUserRole(user.getUserRole());
         data.setUserId(user.getUserId());
-        return ResponseEntity.status(200).body(data);
+        return ResponseEntity.ok(data);
+      } else {
+        // This case rarely happens; Spring throws exception before reaching here
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
       }
-      else
-        return ResponseEntity.status(404).body("Not Found");
+    } catch (BadCredentialsException e) {
+      // This will be caught by the global handler, but you can also handle locally
+      throw e; // Let global handler process it
     }
+  }
 
-
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-      return ResponseEntity.ok(userService.getAllUser());
-    }
+  @GetMapping
+  public ResponseEntity<List<User>> getAllUsers() {
+    return ResponseEntity.ok(userService.getAllUser());
+  }
 }

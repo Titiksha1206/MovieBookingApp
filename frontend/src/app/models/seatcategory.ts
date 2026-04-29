@@ -1,7 +1,10 @@
+import { Seat } from "./seat";
+
 export interface Seatcategory {
   categoryId    : number;
   name          : string;
   price         : number;
   totalSeats    : number;
   availableSeats: number;
+  seats         : Seat[]; 
 }

@@ -1,64 +1,3 @@
-<!-- <div class="page-bg">
-    <div class="booking-card">
-      <h1 class="title">🎬 {{ movie.title }}</h1>
-  
-      <div class="form-row fancy-input">
-        <label for="seats">Enter Number of Seats</label>
-        <div class="input-wrapper">
-          <span class="icon">🎟️</span>
-          <input
-            id="seats"
-            type="number"
-            min="1"
-            (change)="updateTotalCost()"
-            placeholder="e.g., 2"
-            [(ngModel)]="seats" />
-        </div>
-      </div>
-  
-     
-      <div class="form-row fancy-input">
-        <label for="seatType">Select Seat Type</label>
-        <div class="input-wrapper">
-          <span class="icon">💺</span>
-          <select
-            id="seatType"
-            name="seatType"
-            (change)="updateTotalCost()"
-            [(ngModel)]="seatType">
-            <option value="">-- Choose Type --</option>
-            <option value="Balcony">Balcony</option>
-            <option value="Middle">Middle</option>
-            <option value="Economy">Economy</option>
-          </select>
-        </div>
-      </div>
-  
-      <div class="preview">
-        <div class="row">
-          <span>Seats Selected:  </span>
-          <strong>{{ seats || 0 }}</strong>
-        </div>
-        <div class="row">
-          <span>Seat Type: </span>
-          <strong>{{ seatType || 'Not Selected' }}</strong>
-        </div>
-        <div class="row total">
-          <span>Total Price (₹{{perPerson}} each): </span>
-          <strong>₹{{ totalCost}}</strong>
-        </div>
-      </div>
-  
-      <button
-        class="confirm-btn"
-        [disabled]="!seats || seats < 1 || !seatType"
-        (click)="registerBooking()">
-        ✅ Confirm Booking
-      </button>
-  
-  </div>
-  </div>
- -->
 <div class="max-w-2xl mx-auto px-4 py-10">
 
   <!-- ── Movie Header ── -->
@@ -74,7 +13,7 @@
       }
       <div class="min-w-0">
         <div class="badge-gold mb-1.5">Now Booking</div>
-        <h1 class="font-display text-xl
+        <h1 class="font-[family-name:var(--font-display)] text-xl
                    font-bold text-white truncate">
           {{ movie.title }}
         </h1>
@@ -110,11 +49,10 @@
         <button
           (click)="selectDate(i)"
           [class]="selectedDateIndex === i
-            ? 'bg-gold-500 text-black'
-            : 'bg-gray-900 border border-gray-700 text-gray-400
-               hover:border-gold-500 hover:text-gray-200'"
+            ? 'bg-[color:var(--color-gold-500)] text-black font-semibold'
+            : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-[color:var(--color-gold-500)] hover:text-gray-200'"
           class="flex flex-col items-center px-4 py-2.5 rounded-xl
-                 min-w-16 transition-all duration-200 shrink-0">
+                 min-w-[64px] transition-all duration-200 shrink-0">
           <span class="text-xs font-medium">{{ getMonthName(date) }}</span>
           <span class="text-xl font-bold leading-tight">{{ date.getDate() }}</span>
           <span class="text-xs">{{ getDayName(date) }}</span>
@@ -139,280 +77,134 @@
     </div>
   </div>
 
-  <!-- ── Showtimes ── -->
   <!-- ── Showtimes grouped by theater ── -->
-<div class="card p-5 mb-5">
-  <h3 class="text-xs font-semibold text-gray-500 uppercase
-             tracking-wider mb-4">
-    Select Show
-  </h3>
+  <div class="card p-5 mb-5">
+    <h3 class="text-xs font-semibold text-gray-500 uppercase
+               tracking-wider mb-4">
+      Select Show
+    </h3>
 
-  @if (groupedShowtimes.length > 0) {
-    <div class="space-y-5">
-      @for (group of groupedShowtimes; track group.theater) {
+    @if (groupedShowtimes.length > 0) {
+      <div class="space-y-5">
+        @for (group of groupedShowtimes; track group.theater) {
+          <div>
 
-        <div>
-          <!-- Theater Header -->
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-gray-800 border
-                        border-gray-700 flex items-center justify-center
-                        text-lg shrink-0">
-              🎭
-            </div>
-            <div>
+            <!-- Theater Header -->
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-gray-800 border
+                          border-gray-700 flex items-center justify-center
+                          text-lg shrink-0">
+                🎭
+              </div>
               <p class="text-sm font-semibold text-white">
                 {{ group.theater }}
               </p>
             </div>
-          </div>
 
-          <!-- Time Buttons -->
-          <div class="flex flex-wrap gap-2 ml-13 pl-1">
-            @for (showtime of group.shows; track showtime.showtimeId) {
-              <div class="relative group">
+            <!-- Time Buttons -->
+            <div class="flex flex-wrap gap-2 pl-13">
+              @for (showtime of group.shows; track showtime.showtimeId) {
+                <div class="relative group">
 
-                <!-- Time Button -->
-                <button
-                  (click)="selectShowtime(showtime)"
-                  [class]="selectedShowtime?.showtimeId === showtime.showtimeId
-                    ? 'border-gold-500 text-gold-400 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)]'
-                    : 'border-gray-700 text-gray-300 hover:border-gold-500 hover:text-gold-400'"
-                  class="border rounded-xl px-5 py-2.5 text-sm font-semibold
-                         transition-all duration-200 min-w-27.5 text-center">
-                  {{ showtime.showTime }}
-                </button>
+                  <!-- Time Button -->
+                  <button
+                    (click)="selectShowtime(showtime)"
+                    [class]="selectedShowtime?.showtimeId === showtime.showtimeId
+                      ? 'border-[color:var(--color-gold-500)] text-[color:var(--color-gold-400)] bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)]'
+                      : 'border-gray-700 text-gray-300 hover:border-[color:var(--color-gold-500)] hover:text-[color:var(--color-gold-400)]'"
+                    class="border rounded-xl px-5 py-2.5 text-sm font-semibold
+                           transition-all duration-200 min-w-[110px] text-center">
+                    {{ showtime.showTime }}
+                  </button>
 
-                <!-- Hover Popup — seat categories -->
-                @if (showtime.seatCategories?.length > 0) {
-                  <div class="absolute bottom-full left-0 mb-2 z-50
-                              opacity-0 group-hover:opacity-100
-                              pointer-events-none
-                              group-hover:pointer-events-auto
-                              transition-all duration-200
-                              translate-y-1 group-hover:translate-y-0">
+                  <!-- Hover Popup -->
+                  @if (showtime.seatCategories?.length > 0) {
+                    <div class="absolute bottom-full left-0 mb-2 z-50
+                                opacity-0 group-hover:opacity-100
+                                pointer-events-none
+                                group-hover:pointer-events-auto
+                                transition-all duration-200
+                                translate-y-1 group-hover:translate-y-0">
 
-                    <div class="bg-gray-900 border border-gray-700
-                                rounded-xl shadow-2xl p-3 min-w-65">
+                      <div class="bg-gray-900 border border-gray-700
+                                  rounded-xl shadow-2xl p-3 min-w-[260px]">
 
-                      <!-- Arrow -->
-                      <div class="absolute -bottom-1.5 left-6 w-3 h-3
-                                  bg-gray-900 border-r border-b border-gray-700
-                                  rotate-45">
-                      </div>
+                        <!-- Arrow -->
+                        <div class="absolute -bottom-1.5 left-6 w-3 h-3
+                                    bg-gray-900 border-r border-b border-gray-700
+                                    rotate-45">
+                        </div>
 
-                      <p class="text-xs text-gray-500 uppercase tracking-wider
-                                mb-2.5 font-semibold">
-                        Seat Categories
-                      </p>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider
+                                  mb-2.5 font-semibold">
+                          Seat Categories
+                        </p>
 
-                      <div class="space-y-2">
-                        @for (cat of showtime.seatCategories;
-                              track cat.categoryId) {
-                          <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                              <span class="text-sm">
-                                {{ getCategoryIcon(cat.name) }}
-                              </span>
-                              <span class="text-sm text-gray-300 font-medium">
-                                {{ cat.name }}
-                              </span>
+                        <div class="space-y-2">
+                          @for (cat of showtime.seatCategories;
+                                track cat.categoryId) {
+                            <div class="flex items-center justify-between">
+                              <div class="flex items-center gap-2">
+                                <span class="text-sm">
+                                  {{ getCategoryIcon(cat.name) }}
+                                </span>
+                                <span class="text-sm text-gray-300 font-medium">
+                                  {{ cat.name }}
+                                </span>
+                              </div>
+                              <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold
+                                             text-[color:var(--color-gold-400)]">
+                                  ₹{{ cat.price }}
+                                </span>
+                                <span class="text-xs"
+                                  [ngClass]="{
+                                    'text-green-400':  cat.availableSeats > 20,
+                                    'text-yellow-400': cat.availableSeats <= 20
+                                                       && cat.availableSeats > 5,
+                                    'text-red-400':    cat.availableSeats <= 5
+                                                       && cat.availableSeats > 0,
+                                    'text-gray-500':   cat.availableSeats === 0
+                                  }">
+                                  {{ cat.availableSeats > 20  ? 'Available'    :
+                                     cat.availableSeats > 5   ? 'Filling fast' :
+                                     cat.availableSeats > 0   ? 'Almost full'  :
+                                                                'Sold out' }}
+                                </span>
+                              </div>
                             </div>
-                            <div class="flex items-center gap-3">
-                              <span class="text-sm font-bold
-                                           text-gold-400">
-                                ₹{{ cat.price }}
-                              </span>
-                              <span class="text-xs"
-                                [ngClass]="{
-                                  'text-green-400':  cat.availableSeats > 20,
-                                  'text-yellow-400': cat.availableSeats <= 20
-                                                     && cat.availableSeats > 5,
-                                  'text-red-400':    cat.availableSeats <= 5
-                                                     && cat.availableSeats > 0,
-                                  'text-gray-500':   cat.availableSeats === 0
-                                }">
-                                {{ cat.availableSeats > 20  ? 'Available'    :
-                                   cat.availableSeats > 5   ? 'Filling fast' :
-                                   cat.availableSeats > 0   ? 'Almost full'  :
-                                                              'Sold out' }}
-                              </span>
-                            </div>
-                          </div>
-                        }
-                      </div>
+                          }
+                        </div>
 
-                      <p class="text-xs text-gray-600 mt-2.5 pt-2
-                                border-t border-gray-800">
-                        Click to select this show
-                      </p>
+                        <p class="text-xs text-gray-600 mt-2.5 pt-2
+                                  border-t border-gray-800">
+                          Click to select seats →
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                }
+                  }
 
-              </div>
-            }
+                </div>
+              }
+            </div>
+
+            <!-- Divider between theaters -->
+            <div class="border-t border-gray-800/60 mt-5"></div>
+
           </div>
-
-          <!-- Divider between theaters -->
-          <div class="border-t border-gray-800/60 mt-5"></div>
-        </div>
-
-      }
-    </div>
-
-  } @else {
-    <div class="text-center py-10 text-gray-600">
-      <div class="text-4xl mb-3">🕐</div>
-      <p class="text-sm">No shows on this date</p>
-      <p class="text-xs text-gray-700 mt-1">
-        Try selecting another date
-      </p>
-    </div>
-  }
-
-</div>
-
-  <!-- ── Seat Category Selection ── -->
-  @if (selectedShowtime) {
-    <div class="card p-5 mb-5">
-      <h3 class="text-xs font-semibold text-gray-500 uppercase
-                 tracking-wider mb-4">
-        Select Seat Category
-      </h3>
-
-      @if (selectedShowtime.seatCategories?.length > 0) {
-        <div class="grid grid-cols-2 gap-3 mb-5">
-          @for (cat of selectedShowtime.seatCategories;
-                track cat.categoryId) {
-            <button
-              (click)="selectCategory(cat)"
-              [class]="selectedCategory?.categoryId === cat.categoryId
-                ? 'border-gold-500 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] text-white'
-                : cat.availableSeats === 0
-                  ? 'border-gray-800 text-gray-600 cursor-not-allowed opacity-50'
-                  : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200'"
-              [disabled]="cat.availableSeats === 0"
-              class="border rounded-xl p-3 text-left
-                     transition-all duration-200">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-lg">{{ getCategoryIcon(cat.name) }}</span>
-                <span class="text-sm font-semibold">{{ cat.name }}</span>
-              </div>
-              <div class="text-gold-400
-                          font-bold text-base">
-                ₹{{ cat.price }}
-                <span class="text-gray-600 text-xs font-normal">/seat</span>
-              </div>
-              <div class="text-xs mt-0.5"
-                [ngClass]="{
-                  'text-green-400':  cat.availableSeats > 20,
-                  'text-yellow-400': cat.availableSeats <= 20
-                                     && cat.availableSeats > 5,
-                  'text-red-400':    cat.availableSeats <= 5
-                                     && cat.availableSeats > 0,
-                  'text-gray-500':   cat.availableSeats === 0
-                }">
-                {{ cat.availableSeats > 0
-                   ? cat.availableSeats + ' seats left'
-                   : 'Sold out' }}
-              </div>
-            </button>
-          }
-        </div>
-      }
-
-      <!-- Number of Seats -->
-      @if (selectedCategory) {
-        <div>
-          <label class="field-label">🎟 Number of Seats</label>
-          <input
-            type="number"
-            min="1"
-            [max]="selectedCategory.availableSeats"
-            [(ngModel)]="seats"
-            (change)="updateTotalCost()"
-            class="input-field text-lg font-semibold"
-            placeholder="e.g. 2"
-          />
-          <p class="text-xs text-gray-600 mt-1">
-            Max {{ selectedCategory.availableSeats }} seats
-          </p>
-        </div>
-      }
-
-    </div>
-  }
-
-  <!-- ── Booking Summary + Confirm ── -->
-  @if (selectedShowtime && selectedCategory && seats > 0) {
-    <div class="card p-5 mb-5">
-      <h3 class="text-xs font-semibold text-gray-500 uppercase
-                 tracking-wider mb-4">
-        Booking Summary
-      </h3>
-
-      <div class="space-y-2.5">
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Movie</span>
-          <span class="text-gray-200 font-medium truncate ml-4">
-            {{ movie.title }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Date</span>
-          <span class="text-gray-200">
-            {{ selectedDate.getDate() }} {{ getMonthName(selectedDate) }}
-            · {{ getDayName(selectedDate) }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Show</span>
-          <span class="text-gray-200">{{ selectedShowtime.showTime }}</span>
-        </div>
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Theater</span>
-          <span class="text-gray-200 text-right ml-4 truncate max-w-[60%]">
-            {{ selectedShowtime.theater }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Category</span>
-          <span class="text-gray-200">
-            {{ getCategoryIcon(selectedCategory.name) }}
-            {{ selectedCategory.name }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Seats</span>
-          <span class="text-gray-200">
-            {{ seats }} × ₹{{ selectedCategory.price }}
-          </span>
-        </div>
-
-        <div class="border-t border-gray-700 pt-3
-                    flex justify-between items-center">
-          <span class="text-white font-semibold">Total</span>
-          <span class="text-gold-400
-                       font-black text-2xl">
-            ₹{{ totalCost }}
-          </span>
-        </div>
-
+        }
       </div>
-    </div>
 
-    <button
-      [disabled]="!seats || seats < 1 || !selectedCategory"
-      (click)="registerBooking()"
-      class="btn-gold w-full py-4 text-base rounded-xl">
-      ✅ Confirm Booking
-    </button>
-  }
+    } @else {
+      <div class="text-center py-10 text-gray-600">
+        <div class="text-4xl mb-3">🕐</div>
+        <p class="text-sm">No shows on this date</p>
+        <p class="text-xs text-gray-700 mt-1">
+          Try selecting another date
+        </p>
+      </div>
+    }
+
+  </div>
 
 </div>

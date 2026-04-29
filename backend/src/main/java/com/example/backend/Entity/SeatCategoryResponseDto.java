@@ -11,11 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-
-public class BookingDto {
-    private Integer seatCount;
-    private Double totalCost;
-    private String status;
-    private List<Long> seatIds;
-    private Long showtimeId;
+public class SeatCategoryResponseDto {
+    private Long categoryId;
+    private String name;
+    private double price;
+    private Integer totalSeats;
+    private Integer availableSeats;
+    private List<Seat> seats;
 }

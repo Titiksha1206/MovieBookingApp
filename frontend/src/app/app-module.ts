@@ -18,6 +18,7 @@ import { Adminnav } from './components/adminnav/adminnav';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DurationPipe } from './pipes/duration-pipe';
 import { Adminmanage } from './components/adminmanage/adminmanage';
+import { Userseatselection } from './components/userseatselection/userseatselection';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { Adminmanage } from './components/adminmanage/adminmanage';
     Usernav,
     Adminnav,
     DurationPipe,
-    Adminmanage
+    Adminmanage,
+    Userseatselection,
   ],
   imports: [BrowserModule, ReactiveFormsModule, FormsModule, AppRoutingModule],
   providers: [

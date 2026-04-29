@@ -11,9 +11,9 @@ import lombok.Setter;
 @Setter
 public class MovieDto {
     private String title;
-    private int duration;
+    private Integer duration;
     private String genre;
     private String language;
-    private String cbfc; 
+    private String cbfc;
     private String imageUrl;
 }

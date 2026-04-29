@@ -44,6 +44,15 @@ export class ShowtimeService {
   }
 
   getShowtimesByMovie(movieId: number): Observable<any[]> {
-  return this.http.get<any[]>(`${this.baseUrl}/movie/${movieId}`);
+    return this.http.get<any[]>(`${this.baseUrl}/movie/${movieId}`);
   }
+
+  // getSeatsByShowtime(showtimeId: number): Observable<any[]> {
+  //   return this.http.get<any[]>(
+  //     `${this.baseUrl}/${showtimeId}/seats`
+  //   );
+  // }
+  getSeatsByShowtime(showtimeId: number) {
+  return this.http.get<any[]>(`${this.baseUrl}/seats/${showtimeId}`);
+}
 }

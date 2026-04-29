@@ -23,13 +23,15 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Long userId;
     private String email;
+
+    @JsonIgnore
     private String password;
     private String username;
     private String mobileNumber;
     private String userRole;
-    
+
     @OneToMany(mappedBy = "user")
     // @JsonManagedReference("user-booking")
     @JsonIgnore

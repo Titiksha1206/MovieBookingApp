@@ -1,6 +1,7 @@
 package com.example.backend.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +12,6 @@ import com.example.backend.Entity.ShowTime;
 public interface ShowtimeRepo  extends JpaRepository<ShowTime, Long>{
     List<ShowTime> findByMovie_MovieId(long movieId);
     List<ShowTime> findByMovie_MovieIdAndShowDate(long movieId, String showDate);
-    
+    boolean existsByTheaterAndShowDateAndShowTime(String theater, String showDate, String showTime);
+    Optional<ShowTime> findByTheaterAndShowDateAndShowTime(String theater, String showDate, String showTime);
 } 

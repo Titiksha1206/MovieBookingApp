@@ -28,19 +28,21 @@ public class ShowTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long showtimeId;
-    private String showDate;       
-    private String showTime;        
-    private String theater; 
+    private String showDate;
+    private String showTime;
+    private String theater;
     private Integer totalSeats;
-    private Integer availableSeats; 
+    private Integer availableSeats;
 
     @ManyToOne
     @JoinColumn(name = "movieId")
+    // @JsonIgnore
     // @JsonBackReference("movie-showtime")
+    @JsonIgnoreProperties("showtimes")
     private Movie movie;
 
     @OneToMany(mappedBy = "showtime", cascade = CascadeType.ALL, orphanRemoval = true)
     // @JsonManagedReference("showtime-category")
-    @JsonIgnoreProperties("showtime")  
+    @JsonIgnoreProperties("showtime") // important: SeatCategory should not serialize ShowTime back
     private List<SeatCategory> seatCategories = new ArrayList<>();
 }

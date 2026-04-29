@@ -2,6 +2,7 @@ package com.example.backend.Controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.Entity.SeatCategoryResponseDto;
 import com.example.backend.Entity.ShowTime;
 import com.example.backend.Service.ShowtimeService;
 
@@ -26,7 +28,7 @@ public class ShowtimeController {
 
     @PostMapping("/{movieId}")
     public ResponseEntity<ShowTime> addShowtime(@RequestBody ShowTime showtime, @PathVariable long movieId) {
-        return ResponseEntity.status(201).body(showtimeService.addShowtime(showtime, movieId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(showtimeService.addShowtime(showtime, movieId));
     }
 
     @PutMapping("/{showId}")
@@ -53,10 +55,15 @@ public class ShowtimeController {
     public ResponseEntity<List<ShowTime>> getShowtimesByMovie(@PathVariable long movieId) {
         return ResponseEntity.ok(showtimeService.getShowtimesByMovie(movieId));
     }
-    
+
     @DeleteMapping("/{showId}")
     public ResponseEntity<String> deleteShowtime(@PathVariable long showId) {
         showtimeService.deleteShowtimeById(showId);
-        return ResponseEntity.ok("Showtime deleted successfully");
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/seats/{showtimeId}")
+    public ResponseEntity<List<SeatCategoryResponseDto>> getSeatsByShowtime(@PathVariable long showtimeId) {
+        return ResponseEntity.ok(showtimeService.getSeatCategoriesByShowtime(showtimeId));
     }
 }

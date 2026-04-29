@@ -6,10 +6,10 @@ import com.example.backend.Entity.Booking;
 import com.example.backend.Entity.BookingDto;
 
 public interface BookingService {
-     Booking createBooking(BookingDto bookingDto,long movieId, int userId);
+     Booking createBooking(BookingDto bookingDto,long movieId, long userId);
      Booking getBookingById(long bookingId);
      List<Booking> getAllBookings();
      void deleteBooking(long bookingId);
-     List<Booking> findBookingsByUser(int userId);
+     List<Booking> findBookingsByUser(long userId);
      Booking updateBooking(long bookingId, BookingDto bookingDto);
 }
