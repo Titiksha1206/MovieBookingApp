@@ -1,37 +1,3 @@
-<!-- <div class="navbar">
-  <div class="company">
-    BOOK MYSHOW
-  </div>
-
-  <div class="navigation">
-
-    @if (isLoggedIn) {
-      <div class="user-details">
-        {{ userName }} / {{ userRole }}
-      </div>
-    }
-
-    @if (!isLoggedIn) {
-      <div class="nav-links">
-        <a routerLink="/register">Register</a>
-        <a routerLink="/login">Login</a>
-      </div>
-    } @else {
-
-      @if (userRole === 'ADMIN') {
-        <app-adminnav></app-adminnav>
-      } @else {
-        <app-usernav></app-usernav>
-      }
-
-      <button class="logout-button" (click)="logout()">
-        Logout
-      </button>
-    }
-
-  </div>
-</div> -->
-
 <nav class="bg-cinema-950 border-b border-gray-800 sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
