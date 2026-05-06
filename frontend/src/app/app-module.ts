@@ -42,7 +42,6 @@ import { Userseatselection } from './components/userseatselection/userseatselect
   imports: [BrowserModule, ReactiveFormsModule, FormsModule, AppRoutingModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
   ],
   bootstrap: [App],

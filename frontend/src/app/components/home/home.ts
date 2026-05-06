@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-home',
@@ -6,19 +8,28 @@ import { Component } from '@angular/core';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-isLoggedIn: boolean = false;
+export class Home implements OnInit {
+  isLoggedIn: boolean = false;
+  private userSub!: Subscription;
+  constructor(private authService: AuthService) {}
 
-ngOnInit() {
-  this.checkLogin();
-}
-
-checkLogin() {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    this.isLoggedIn = !!token;
-  } else {
-    this.isLoggedIn = false;
+  ngOnInit(): void {
+    // Subscribe to auth state changes (login/logout)
+    this.userSub = this.authService.user$.subscribe((user) => {
+      this.isLoggedIn = !!user;
+    });
   }
-}
+
+  ngOnDestroy(): void {
+    if (this.userSub) this.userSub.unsubscribe();
+  }
+
+  checkLogin(): void {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      this.isLoggedIn = !!token;
+    } else {
+      this.isLoggedIn = false;
+    }
+  }
 }

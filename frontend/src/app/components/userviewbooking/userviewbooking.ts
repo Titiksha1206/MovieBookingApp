@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { BookingService } from '../../services/booking-service';
-import { AuthService } from '../../services/auth-service';
 import { Booking } from '../../models/booking';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -10,61 +9,66 @@ import { isPlatformBrowser } from '@angular/common';
   templateUrl: './userviewbooking.html',
   styleUrl: './userviewbooking.css',
 })
-export class Userviewbooking implements OnInit{
-  bookings : Booking[] = [];
+export class Userviewbooking implements OnInit {
+  bookings: Booking[] = [];
   userId!: number;
-  errorMessage : string = '';
+  errorMessage: string = '';
   isLoading = true;
- 
+
   constructor(
-    private bookingService : BookingService,
-    private authService : AuthService,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+    private bookingService: BookingService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {}
 
   ngOnInit(): void {
-  if (typeof window !== 'undefined') {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.isLoading = false;
+      return;
+    }
     const id = localStorage.getItem('userId');
 
     if (!id) {
-      console.error('❌ userId not found in localStorage');
-      this.errorMessage = 'User not logged in';
+      this.errorMessage = 'Please log in to view your bookings.';
+      this.isLoading = false;
       return;
     }
 
     this.userId = Number(id);
-    console.log('✅ userId:', this.userId);
 
     this.loadUserBookings();
   }
-}
-  loadUserBookings(){
+
+  loadUserBookings(): void {
     this.isLoading = true;
     this.bookingService.getUserBookings(this.userId).subscribe({
-       next : (data : Booking[])=> {
-            this.bookings = data;
-            this.isLoading = false;
-            console.log(JSON.stringify(data));
-       } ,
-       error : (err) => {
-        console.log(err);
-        alert("Failed to load the bookings");
-        this.errorMessage = err.error?.message || 'Failed to load bookings';
+      next: (data) => {
+        this.bookings = data;
         this.isLoading = false;
-       }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.log(err);
+        const message = err.error?.message || 'Failed to load bookings. Please try again later.';
+        this.errorMessage = message;
+        this.isLoading = false;
+        alert(message);
+      },
     });
   }
 
-  cancleBooking(bookingId : number){
-     this.bookingService.deleteBooking(bookingId).subscribe( {
-        next : (data : any) => {
-          alert("Cancel booking Successfull");
-          this.loadUserBookings();
-        },
-        error : (err) => {
-          console.log(err);
-          alert("Cancel booking failed");
-        }
-     })
+  cancelBooking(bookingId: number): void {
+    this.bookingService.deleteBooking(bookingId).subscribe({
+      next: () => {
+        alert('Cancel booking Successfull');
+        this.loadUserBookings();
+      },
+      error: (err) => {
+        console.log(err);
+        const message = err.error?.message || 'Failed to cancel booking. Please try again.';
+        this.errorMessage = message;
+        alert(message);
+      },
+    });
   }
 }

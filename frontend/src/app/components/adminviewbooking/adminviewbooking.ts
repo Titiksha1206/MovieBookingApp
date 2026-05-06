@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BookingService } from '../../services/booking-service';
 import { Booking } from '../../models/booking';
 
@@ -8,33 +8,35 @@ import { Booking } from '../../models/booking';
   templateUrl: './adminviewbooking.html',
   styleUrl: './adminviewbooking.css',
 })
-export class Adminviewbooking{
+export class Adminviewbooking implements OnInit {
   bookings: Booking[] = [];
   errorMessage: string = '';
   isLoading = true;
 
   constructor(
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.loadBookings();
   }
 
-  loadBookings() {
+  loadBookings(): void {
     this.isLoading = true;
     this.bookingService.getAllBookings().subscribe({
       next: (data) => {
         this.bookings = data;
-         this.isLoading = false;
-        console.log(JSON.stringify(data));
+
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.errorMessage = 'Failed to load bookings';
         alert('Failed to load the Booking');
         this.isLoading = false;
-      }
+      },
     });
   }
 }

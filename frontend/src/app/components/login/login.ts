@@ -11,30 +11,27 @@ import { User } from '../../models/user';
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
-  
-  // Optional: show an error message in UI instead of only alert()
   errorMessage: string = '';
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {}
 
   login(form: NgForm): void {
-    // ✅ prevent submit when invalid (extra safety; button already disabled)
     if (form.invalid) {
       form.control.markAllAsTouched();
       return;
     }
 
-    const loginDto: any = {
+    const loginDto = {
       username: form.value.username,
-      password: form.value.password
+      password: form.value.password,
     };
 
-    // ✅ clear old auth state before new login attempt
+    // Clear old auth state
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
@@ -44,30 +41,40 @@ export class Login implements OnInit {
 
     this.authService.loginUser(loginDto).subscribe({
       next: (data) => {
-        // Keep your existing behaviour
+        // Store auth data
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', String(data.userId));  
+        localStorage.setItem('userId', String(data.userId));
         localStorage.setItem('userRole', data.userRole);
         localStorage.setItem('username', data.username);
 
-        // ✅ keep app state in sync (you already do this)
-        this.authService.setUser({ userId: data.userId, userRole: data.userRole, username: data.username });
+        // Sync auth state
+        this.authService.setUser({
+          userId: data.userId,
+          userRole: data.userRole,
+          username: data.username,
+        });
 
-        // Optional UX: reset form after success
         form.resetForm();
-        // ✅ Redirect based on role
-  if (data.userRole === 'ADMIN') {
-    this.router.navigate(['/admin/view/Movies']);
-  } else {
-    this.router.navigate(['/user/view/Movies']);
-  }
-        // this.router.navigate(['/']);
+
+        // ✅ Check for saved return URL (from seat selection or any other page)
+        const returnUrl = localStorage.getItem('returnUrl');
+        if (returnUrl) {
+          localStorage.removeItem('returnUrl'); // clear after use
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          // Default role‑based redirect
+          if (data.userRole === 'ADMIN') {
+            this.router.navigate(['/admin/view/Movies']);
+          } else {
+            this.router.navigate(['/user/view/Movies']);
+          }
+        }
       },
       error: (err) => {
         console.error(err);
         this.errorMessage = 'Invalid username or password. Login Failed.';
         alert(this.errorMessage);
-      }
+      },
     });
   }
 }

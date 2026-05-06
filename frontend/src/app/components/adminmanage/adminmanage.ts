@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Showtime } from '../../models/showtime';
 import { MovieService } from '../../services/movie-service';
 import { ShowtimeService } from '../../services/showtime-service';
@@ -11,31 +11,33 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './adminmanage.css',
 })
 export class Adminmanage implements OnInit {
-  movieId  : number = 0;
-  movie    : any    = null;
+  movieId: number = 0;
+  movie: any = null;
   showtimes: Showtime[] = [];
+  showDeleteModal = false;
+  selectedShowtimeId: number | null = null;
 
   // ── Showtime Form ──
-  showForm     : boolean = false;
-  newTheater   : string  = '';
-  newDate      : string  = '';
-  newTime      : string  = '';
+  showForm: boolean = false;
+  newTheater: string = '';
+  newDate: string = '';
+  newTime: string = '';
 
   // ── Available seat categories ──
   availableCategories = [
-    { name: 'Classic',   icon: '🪑', color: 'bg-gray-400'   },
-    { name: 'Prime',     icon: '⭐', color: 'bg-blue-400'   },
-    { name: 'Premium',   icon: '💎', color: 'bg-purple-400' },
-    { name: 'Recliners', icon: '🛋', color: 'bg-amber-400'  },
+    { name: 'Classic', icon: '🪑', color: 'bg-gray-400' },
+    { name: 'Prime', icon: '⭐', color: 'bg-blue-400' },
+    { name: 'Premium', icon: '💎', color: 'bg-purple-400' },
+    { name: 'Recliners', icon: '🛋', color: 'bg-amber-400' },
   ];
 
   selectedCategories: {
-    name      : string;
-    selected  : boolean;
-    price     : number;
+    name: string;
+    selected: boolean;
+    price: number;
     totalSeats: number;
-    icon      : string;
-    color     : string;
+    icon: string;
+    color: string;
   }[] = [];
 
   theaters: string[] = [
@@ -46,18 +48,19 @@ export class Adminmanage implements OnInit {
     'Miraj Cinemas : TGIP, Noida',
     'PVR : Pacific Mall, Delhi',
     'INOX : Nehru Place, Delhi',
-    'Carnival Cinemas : Faridabad'
+    'Carnival Cinemas : Faridabad',
   ];
 
   constructor(
-    private movieService    : MovieService,
-    private showtimeService : ShowtimeService,
-    private activatedRoute  : ActivatedRoute
+    private movieService: MovieService,
+    private showtimeService: ShowtimeService,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.initCategories();
-    this.activatedRoute.queryParams.subscribe(params => {
+    this.activatedRoute.queryParams.subscribe((params) => {
       this.movieId = Number(params['movieId']);
       this.loadMovie();
       this.loadShowtimes();
@@ -65,11 +68,11 @@ export class Adminmanage implements OnInit {
   }
 
   initCategories(): void {
-    this.selectedCategories = this.availableCategories.map(c => ({
+    this.selectedCategories = this.availableCategories.map((c) => ({
       ...c,
-      selected  : false,
-      price     : 0,
-      totalSeats: 50
+      selected: false,
+      price: 0,
+      totalSeats: 48,
     }));
   }
 
@@ -77,27 +80,28 @@ export class Adminmanage implements OnInit {
 
   loadMovie(): void {
     this.movieService.getMovieById(this.movieId).subscribe({
-      next : (data: any) => this.movie = data,
-      error: (err: any)  => console.error('Failed to load movie', err)
+      next: (data: any) => {
+        this.movie = data;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => console.error('Failed to load movie', err),
     });
   }
 
   loadShowtimes(): void {
     this.showtimeService.getAllShowtimes().subscribe({
       next: (data: Showtime[]) => {
-        this.showtimes = data.filter(
-          (s: any) => s.movie?.movieId === this.movieId
-        );
+        this.showtimes = data.filter((s: any) => s.movie?.movieId === this.movieId);
+        this.cdr.detectChanges();
       },
-      error: (err: any) => console.error('Failed to load showtimes', err)
+      error: (err: any) => console.error('Failed to load showtimes', err),
     });
   }
 
   // ── Category Toggle ──
 
   toggleCategory(index: number): void {
-    this.selectedCategories[index].selected =
-      !this.selectedCategories[index].selected;
+    this.selectedCategories[index].selected = !this.selectedCategories[index].selected;
   }
 
   // ── Add Showtime ──
@@ -108,40 +112,38 @@ export class Adminmanage implements OnInit {
       return;
     }
 
-    const chosenCategories = this.selectedCategories.filter(c => c.selected);
+    const chosenCategories = this.selectedCategories.filter((c) => c.selected);
 
     if (chosenCategories.length === 0) {
       alert('Please select at least one seat category');
       return;
     }
 
-    const hasInvalidPrice = chosenCategories.some(c => !c.price || c.price <= 0);
+    const hasInvalidPrice = chosenCategories.some((c) => !c.price || c.price <= 0);
     if (hasInvalidPrice) {
       alert('Please enter a valid price for all selected categories');
       return;
     }
 
-    const hasInvalidSeats = chosenCategories.some(c => !c.totalSeats || c.totalSeats <= 0);
+    const hasInvalidSeats = chosenCategories.some((c) => !c.totalSeats || c.totalSeats <= 0);
     if (hasInvalidSeats) {
       alert('Please enter valid seat count for all selected categories');
       return;
     }
 
     // ✅ Total seats = sum of all category seats
-    const totalSeats = chosenCategories.reduce(
-      (sum, c) => sum + (c.totalSeats || 0), 0
-    );
+    const totalSeats = chosenCategories.reduce((sum, c) => sum + (c.totalSeats || 0), 0);
 
     const dto: any = {
-      theater       : this.newTheater,
-      showDate      : this.newDate,
-      showTime      : this.newTime,
-      totalSeats    : totalSeats,
-      seatCategories: chosenCategories.map(c => ({
-        name      : c.name,
-        price     : c.price,
-        totalSeats: c.totalSeats
-      }))
+      theater: this.newTheater,
+      showDate: this.newDate,
+      showTime: this.newTime,
+      totalSeats: totalSeats,
+      seatCategories: chosenCategories.map((c) => ({
+        name: c.name,
+        price: c.price,
+        totalSeats: c.totalSeats,
+      })),
     };
 
     this.showtimeService.addShowtime(this.movieId, dto).subscribe({
@@ -149,110 +151,130 @@ export class Adminmanage implements OnInit {
         this.loadShowtimes();
         this.resetForm();
       },
-      error: () => alert('Failed to add showtime')
+      error: () => alert('Failed to add showtime'),
     });
   }
 
   // ── Edit Showtime ──
-editingShowtimeId : number | null = null;
-editTheater       : string = '';
-editDate          : string = '';
-editTime          : string = '';
+  editingShowtimeId: number | null = null;
+  editTheater: string = '';
+  editDate: string = '';
+  editTime: string = '';
 
-editSelectedCategories: {
-  name          : string;
-  selected      : boolean;
-  price         : number;
-  totalSeats    : number;
-  availableSeats: number;
-  categoryId    : number | null;
-  icon          : string;
-}[] = [];
+  editSelectedCategories: {
+    name: string;
+    selected: boolean;
+    price: number;
+    totalSeats: number;
+    availableSeats: number;
+    categoryId: number | null;
+    icon: string;
+  }[] = [];
 
-startEdit(showtime: any): void {
-  this.editingShowtimeId = showtime.showtimeId;
-  this.editTheater       = showtime.theater;
-  this.editDate          = showtime.showDate;
-  this.editTime          = showtime.showTime;
+  startEdit(showtime: any): void {
+    this.editingShowtimeId = showtime.showtimeId;
+    this.editTheater = showtime.theater;
+    this.editDate = showtime.showDate;
+    this.editTime = showtime.showTime;
 
-  // ✅ Pre-populate categories from existing showtime
-  this.editSelectedCategories = this.availableCategories.map(cat => {
-    const existing = showtime.seatCategories?.find(
-      (c: any) => c.name === cat.name
-    );
-    return {
-      name          : cat.name,
-      icon          : cat.icon,
-      selected      : !!existing,
-      price         : existing?.price     || 0,
-      totalSeats    : existing?.totalSeats || 50,
-      availableSeats: existing?.availableSeats || 0,
-      categoryId    : existing?.categoryId || null
+    // ✅ Pre-populate categories from existing showtime
+    this.editSelectedCategories = this.availableCategories.map((cat) => {
+      const existing = showtime.seatCategories?.find((c: any) => c.name === cat.name);
+      return {
+        name: cat.name,
+        icon: cat.icon,
+        selected: !!existing,
+        price: existing?.price || 0,
+        totalSeats: existing?.totalSeats || 50,
+        availableSeats: existing?.availableSeats || 0,
+        categoryId: existing?.categoryId || null,
+      };
+    });
+  }
+  // Add this method
+  toggleAddForm(): void {
+    if (this.showForm) {
+      // Closing the form – reset all fields
+      this.resetForm();
+    } else {
+      // Opening the form – optionally reset anyway to start fresh
+      this.resetForm();
+      this.showForm = true;
+    }
+  }
+  cancelEdit(): void {
+    this.editingShowtimeId = null;
+    this.editSelectedCategories = [];
+    this.editTheater = '';
+    this.editDate = '';
+    this.editTime = '';
+  }
+
+  toggleEditCategory(index: number): void {
+    this.editSelectedCategories[index].selected = !this.editSelectedCategories[index].selected;
+  }
+
+  saveEdit(): void {
+    if (!this.editTheater || !this.editDate || !this.editTime) {
+      alert('Please fill theater, date and time');
+      return;
+    }
+
+    const chosenCategories = this.editSelectedCategories.filter((c) => c.selected);
+
+    if (chosenCategories.length === 0) {
+      alert('Please select at least one seat category');
+      return;
+    }
+
+    const totalSeats = chosenCategories.reduce((sum, c) => sum + (c.totalSeats || 0), 0);
+
+    const dto: any = {
+      theater: this.editTheater,
+      showDate: this.editDate,
+      showTime: this.editTime,
+      totalSeats: totalSeats,
+      availableSeats: totalSeats,
+      seatCategories: chosenCategories.map((c) => ({
+        name: c.name,
+        price: c.price,
+        totalSeats: c.totalSeats,
+        availableSeats: c.availableSeats || c.totalSeats,
+      })),
     };
-  });
-}
 
-cancelEdit(): void {
-  this.editingShowtimeId      = null;
-  this.editSelectedCategories = [];
-  this.editTheater = '';
-  this.editDate    = '';
-  this.editTime    = '';
-}
-
-toggleEditCategory(index: number): void {
-  this.editSelectedCategories[index].selected =
-    !this.editSelectedCategories[index].selected;
-}
-
-saveEdit(): void {
-  if (!this.editTheater || !this.editDate || !this.editTime) {
-    alert('Please fill theater, date and time');
-    return;
+    this.showtimeService.updateShowtime(this.editingShowtimeId!, dto).subscribe({
+      next: () => {
+        this.loadShowtimes();
+        this.cdr.detectChanges();
+        this.cancelEdit();
+      },
+      error: () => alert('Failed to update showtime'),
+    });
   }
-
-  const chosenCategories = this.editSelectedCategories.filter(c => c.selected);
-
-  if (chosenCategories.length === 0) {
-    alert('Please select at least one seat category');
-    return;
-  }
-
-  const totalSeats = chosenCategories.reduce(
-    (sum, c) => sum + (c.totalSeats || 0), 0
-  );
-
-  const dto: any = {
-    theater       : this.editTheater,
-    showDate      : this.editDate,
-    showTime      : this.editTime,
-    totalSeats    : totalSeats,
-    availableSeats: totalSeats,
-    seatCategories: chosenCategories.map(c => ({
-      name          : c.name,
-      price         : c.price,
-      totalSeats    : c.totalSeats,
-      availableSeats: c.availableSeats || c.totalSeats
-    }))
-  };
-
-  this.showtimeService.updateShowtime(
-    this.editingShowtimeId!, dto
-  ).subscribe({
-    next: () => {
-      this.loadShowtimes();
-      this.cancelEdit();
-    },
-    error: () => alert('Failed to update showtime')
-  });
-}
   // ── Delete Showtime ──
 
+  openDeleteModal(id: number): void {
+    this.selectedShowtimeId = id;
+    this.showDeleteModal = true;
+  }
+
+  closeModal(): void {
+    this.showDeleteModal = false;
+    this.selectedShowtimeId = null;
+  }
+
+  confirmDelete(): void {
+    if (this.selectedShowtimeId !== null) {
+      this.deleteShowtime(this.selectedShowtimeId);
+    }
+    this.closeModal();
+  }
+
   deleteShowtime(showtimeId: number): void {
-    if (!confirm('Delete this showtime?')) return;
     this.showtimeService.deleteShowtime(showtimeId).subscribe({
-      next : () => this.loadShowtimes(),
-      error: () => alert('Failed to delete showtime')
+      next: () => this.loadShowtimes(),
+      error: () => alert('Failed to delete showtime'),
     });
   }
 
@@ -260,9 +282,9 @@ saveEdit(): void {
 
   resetForm(): void {
     this.newTheater = '';
-    this.newDate    = '';
-    this.newTime    = '';
-    this.showForm   = false;
+    this.newDate = '';
+    this.newTime = '';
+    this.showForm = false;
     this.initCategories();
   }
 
@@ -295,7 +317,7 @@ saveEdit(): void {
 
   get totalSelectedSeats(): number {
     return this.selectedCategories
-      .filter(c => c.selected)
+      .filter((c) => c.selected)
       .reduce((sum, c) => sum + (c.totalSeats || 0), 0);
   }
 }

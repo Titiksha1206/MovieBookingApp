@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-usernav',
@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './usernav.html',
   styleUrl: './usernav.css',
 })
-export class Usernav {}
+export class Usernav implements OnInit {
+  constructor() {}
+
+  ngOnInit(): void {}
+}

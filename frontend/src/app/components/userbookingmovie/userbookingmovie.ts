@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Movie } from '../../models/movie';
 import { MovieService } from '../../services/movie-service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,6 @@ import { ShowtimeService } from '../../services/showtime-service';
   styleUrl: './userbookingmovie.css',
 })
 export class Userbookingmovie implements OnInit {
-
   movie!: Movie;
   movieId!: number;
 
@@ -28,13 +27,14 @@ export class Userbookingmovie implements OnInit {
     private movieService: MovieService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private showtimeService: ShowtimeService
+    private showtimeService: ShowtimeService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.generateDates();
 
-    this.activatedRoute.queryParams.subscribe(params => {
+    this.activatedRoute.queryParams.subscribe((params) => {
       this.movieId = params['movieId'];
       this.loadMovie();
       this.loadShowtimes();
@@ -62,18 +62,27 @@ export class Userbookingmovie implements OnInit {
   // ── API Calls ──
   loadMovie(): void {
     this.movieService.getMovieById(this.movieId).subscribe({
-      next: (data) => this.movie = data,
+      next: (data) => {
+        this.movie = data;
+        this.cdr.detectChanges();
+      },
       error: (err) => {
         console.error(err);
-        alert("Loading Movie failed");
-      }
+        alert('Loading Movie failed');
+      },
     });
   }
 
   loadShowtimes(): void {
     this.showtimeService.getShowtimesByMovie(this.movieId).subscribe({
-      next: (data: any[]) => this.showtimes = data,
-      error: (err) => console.error(err)
+      next: (data) => {
+        this.showtimes = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Loading Showtimes failed');
+      },
     });
   }
 
@@ -82,8 +91,8 @@ export class Userbookingmovie implements OnInit {
     this.router.navigate(['/user/selectSeats'], {
       queryParams: {
         showtimeId: showtime.showtimeId,
-        movieId: this.movieId
-      }
+        movieId: this.movieId,
+      },
     });
   }
 
@@ -105,10 +114,10 @@ export class Userbookingmovie implements OnInit {
 
   getCategoryIcon(name: string): string {
     const icons: any = {
-      'Classic': '🪑',
-      'Prime': '⭐',
-      'Premium': '💎',
-      'Recliners': '🛋'
+      Classic: '🪑',
+      Prime: '⭐',
+      Premium: '💎',
+      Recliners: '🛋',
     };
     return icons[name] || '💺';
   }
@@ -116,9 +125,7 @@ export class Userbookingmovie implements OnInit {
   // ── Grouped Showtimes ──
   get groupedShowtimes(): { theater: string; shows: any[] }[] {
     const dateStr = this.formatDate(this.selectedDate);
-    const filtered = this.showtimes.filter(
-      (s: any) => s.showDate === dateStr
-    );
+    const filtered = this.showtimes.filter((s: any) => s.showDate === dateStr);
 
     const groups: { [key: string]: any[] } = {};
 
@@ -127,11 +134,9 @@ export class Userbookingmovie implements OnInit {
       groups[s.theater].push(s);
     });
 
-    return Object.keys(groups).map(theater => ({
+    return Object.keys(groups).map((theater) => ({
       theater,
-      shows: groups[theater].sort((a, b) =>
-        a.showTime.localeCompare(b.showTime)
-      )
+      shows: groups[theater].sort((a, b) => a.showTime.localeCompare(b.showTime)),
     }));
   }
 }

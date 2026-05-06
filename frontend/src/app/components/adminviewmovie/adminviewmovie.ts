@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Movie } from '../../models/movie';
 import { MovieService } from '../../services/movie-service';
 import { Router } from '@angular/router';
@@ -10,69 +10,73 @@ import { Router } from '@angular/router';
   styleUrl: './adminviewmovie.css',
 })
 export class Adminviewmovie implements OnInit {
-   movies : Movie[] = [];
-   errorMessage : string = '';
+  movies: Movie[] = [];
+  errorMessage: string = '';
+  showDeleteModal = false;
+  selectedMovieId: number | null = null;
+  isLoading = true;
 
   constructor(
-    private movieService : MovieService,
-    private router : Router
-  ) { }
+    private movieService: MovieService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loadMovies();
   }
 
-  loadMovies() {
-     this.movieService.getAllMovies().subscribe({
+  loadMovies(): void {
+    this.isLoading = true;
+    this.movieService.getAllMovies().subscribe({
       next: (data) => {
         this.movies = data;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
-       alert("Failed to load movies");
+        alert('Failed to load movies');
         console.error(err);
-      }
-     })
-    }
-
-    showDeleteModal = false;
-selectedMovieId: number | null = null;
-
-openDeleteModal(id: number) {
-  this.selectedMovieId = id;
-  this.showDeleteModal = true;
-}
-
-closeModal() {
-  this.showDeleteModal = false;
-  this.selectedMovieId = null;
-}
-
-confirmDelete() {
-  if (this.selectedMovieId !== null) {
-    this.deleteMovie(this.selectedMovieId);
+        this.isLoading = false;
+      },
+    });
   }
-  this.closeModal();
-}
 
-  deleteMovie(movieId : number) {
+  openDeleteModal(id: number): void {
+    this.selectedMovieId = id;
+    this.showDeleteModal = true;
+  }
+
+  closeModal(): void {
+    this.showDeleteModal = false;
+    this.selectedMovieId = null;
+  }
+
+  confirmDelete(): void {
+    if (this.selectedMovieId !== null) {
+      this.deleteMovie(this.selectedMovieId);
+    }
+    this.closeModal();
+  }
+
+  deleteMovie(movieId: number): void {
     this.movieService.deleteMovie(movieId).subscribe({
       next: () => {
-        //this.toastr.success("Movie deleted successfully!", "Success");  
+        alert('Movie deleted successfully');
         this.loadMovies();
       },
       error: (err) => {
-        alert("Failed to delete movie");  
+        alert('Failed to delete movie');
         console.error(err);
-      }
+      },
     });
   }
-  
 
-  updateMovie(movieId : number) {
-      this.router.navigate(['/admin/add/newMovies'], {queryParams:{movieId : movieId}})
+  updateMovie(movieId: number): void {
+    this.router.navigate(['/admin/add/newMovies'], { queryParams: { movieId: movieId } });
   }
-  
+
   manageMovie(movieId: number): void {
-  this.router.navigate(['/admin/manage'], { queryParams: { movieId } });
-  } 
+    this.router.navigate(['/admin/manage'], { queryParams: { movieId } });
+  }
 }

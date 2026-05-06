@@ -1,10 +1,9 @@
 <div class="max-w-xl mx-auto px-6 py-12">
-
   <!-- Page Header -->
   <div class="flex items-center gap-3 mb-8">
-    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl
-                bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)]
-                border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]">
+    <div
+      class="w-11 h-11 rounded-xl flex items-center justify-center text-xl bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]"
+    >
       🎬
     </div>
     <div>
@@ -18,8 +17,15 @@
   </div>
 
   <div class="card p-8">
+    @if (isEditing) {
+      <button
+        (click)="cancelEdit()"
+        class="absolute top-4 right-4 text-gray-600 hover:text-red-400 text-xl transition-colors leading-none z-10"
+      >
+        ✕
+      </button>
+    }
     <form [formGroup]="movieForm" (ngSubmit)="addOrUpdateMovie()" class="space-y-5">
-
       <!-- Movie Image URL -->
       <div>
         <label for="imageUrl" class="field-label">
@@ -50,8 +56,9 @@
               class="w-full h-48 object-cover rounded-xl border border-gray-700"
               (error)="previewUrl = ''"
             />
-            <span class="absolute top-2 right-2 bg-green-500/80 text-white
-                        text-xs px-2 py-0.5 rounded-full">
+            <span
+              class="absolute top-2 right-2 bg-green-500/80 text-white text-xs px-2 py-0.5 rounded-full"
+            >
               ✓ Preview
             </span>
           </div>
@@ -63,8 +70,13 @@
         <label for="title" class="field-label">
           Movie Title <span class="text-red-500">*</span>
         </label>
-        <input id="title" type="text" formControlName="title"
-               class="input-field" placeholder="e.g. Inception" />
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="input-field"
+          placeholder="e.g. Inception"
+        />
         @if (title.touched || title.dirty) {
           <div class="error-text">
             @if (title.errors?.['required']) {
@@ -84,8 +96,13 @@
             <button
               type="button"
               (click)="setCbfc(rating)"
-              [ngClass]="movieForm.get('cbfc')?.value === rating ? 'border-gold-500 bg-gold-500 text-black font-bold' : 'border-gray-700 text-gray-400'"
-              class="border rounded-xl py-2.5 text-sm font-semibold transition-all duration-200">
+              [ngClass]="
+                movieForm.get('cbfc')?.value === rating
+                  ? 'border-gold-500 bg-gold-500 text-black font-bold'
+                  : 'border-gray-700 text-gray-400'
+              "
+              class="border rounded-xl py-2.5 text-sm font-semibold transition-all duration-200"
+            >
               {{ rating }}
             </button>
           }
@@ -109,11 +126,14 @@
 
       <!-- Genre -->
       <div>
-        <label for="genre" class="field-label">
-          Genre <span class="text-red-500">*</span>
-        </label>
-        <input id="genre" type="text" formControlName="genre"
-               class="input-field" placeholder="e.g. Sci-Fi, Thriller" />
+        <label for="genre" class="field-label"> Genre <span class="text-red-500">*</span> </label>
+        <input
+          id="genre"
+          type="text"
+          formControlName="genre"
+          class="input-field"
+          placeholder="e.g. Sci-Fi, Thriller"
+        />
         @if (genre.touched || genre.dirty) {
           <div class="error-text">
             @if (genre.errors?.['required']) {
@@ -128,7 +148,12 @@
         <label for="language" class="field-label">
           Language <span class="text-red-500">*</span>
         </label>
-        <select id="language" formControlName="language" (change)="onLanguageChange($event)" class="input-field">
+        <select
+          id="language"
+          formControlName="language"
+          (change)="onLanguageChange($event)"
+          class="input-field"
+        >
           <option value="">Select Language</option>
           <option value="Hindi">Hindi</option>
           <option value="English">English</option>
@@ -149,99 +174,100 @@
         }
       </div>
 
-      
       <!-- Duration + Price side by side -->
-     <div class="w-full">
+      <div class="w-full">
+        <!-- Duration: Hours + Minutes -->
+        <div>
+          <label class="field-label"> Duration <span class="text-red-500">*</span> </label>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="relative">
+              <input
+                type="number"
+                min="0"
+                [(ngModel)]="durationHours"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="updateDuration()"
+                class="input-field pr-10"
+                placeholder="0"
+              />
+              <span
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none"
+              >
+                hr
+              </span>
+            </div>
 
-  <!-- Duration: Hours + Minutes -->
-  <div>
-    <label class="field-label">
-      Duration <span class="text-red-500">*</span>
-    </label>
-    <div class="grid grid-cols-2 gap-2">
+            <div class="relative">
+              <input
+                type="number"
+                min="0"
+                max="59"
+                [(ngModel)]="durationMinutes"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="updateDuration()"
+                class="input-field pr-10"
+                placeholder="0"
+              />
+              <span
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none"
+              >
+                min
+              </span>
+            </div>
+          </div>
 
-      <div class="relative">
-        <input
-          type="number"
-          min="0"
-          [(ngModel)]="durationHours"
-          [ngModelOptions]="{standalone: true}"
-          (change)="updateDuration()"
-          class="input-field pr-10"
-          placeholder="0"
-        />
-        <span class="absolute right-3 top-1/2 -translate-y-1/2
-                     text-xs text-gray-500 pointer-events-none">
-          hr
-        </span>
+          <!-- Total preview -->
+          @if (durationHours > 0 || durationMinutes > 0) {
+            <p class="text-xs text-gray-500 mt-1.5">
+              = {{ durationHours }}h {{ durationMinutes }}m ({{
+                durationHours * 60 + (durationMinutes || 0)
+              }}
+              min total)
+            </p>
+          }
+
+          @if (duration.touched || duration.dirty) {
+            <div class="error-text">
+              @if (duration.errors?.['required']) {
+                <span>Duration is required</span>
+              }
+              @if (duration.errors?.['min']) {
+                <span>Must be greater than 0</span>
+              }
+            </div>
+          }
+        </div>
       </div>
 
-      <div class="relative">
-        <input
-          type="number"
-          min="0"
-          max="59"
-          [(ngModel)]="durationMinutes"
-          [ngModelOptions]="{standalone: true}"
-          (change)="updateDuration()"
-          class="input-field pr-10"
-          placeholder="0"
-        />
-        <span class="absolute right-3 top-1/2 -translate-y-1/2
-                     text-xs text-gray-500 pointer-events-none">
-          min
-        </span>
-      </div>
-
-    </div>
-
-    <!-- Total preview -->
-    @if (durationHours > 0 || durationMinutes > 0) {
-      <p class="text-xs text-gray-500 mt-1.5">
-        = {{ durationHours }}h {{ durationMinutes }}m
-        ({{ (durationHours * 60) + (durationMinutes || 0) }} min total)
-      </p>
-    }
-
-    @if (duration.touched || duration.dirty) {
-      <div class="error-text">
-        @if (duration.errors?.['required']) {
-          <span>Duration is required</span>
-        }
-        @if (duration.errors?.['min']) {
-          <span>Must be greater than 0</span>
-        }
-      </div>
-    }
-  </div>
-
-</div>
-
-      <button type="submit" [disabled]="movieForm.invalid"
-              class="btn-gold w-full py-3 rounded-lg mt-2">
+      <button
+        type="submit"
+        [disabled]="movieForm.invalid || isSubmitting"
+        class="btn-gold w-full py-3 rounded-lg mt-2"
+      >
         {{ isEditing ? '✓ Update Movie' : '+ Add Movie' }}
       </button>
-
     </form>
   </div>
 </div>
 
 <!-- Success Modal -->
 @if (showModal) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center px-4
-              bg-black/75 backdrop-blur-md">
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/75 backdrop-blur-md"
+  >
     <div class="card max-w-sm w-full p-8 text-center relative">
+      @if (!isEditing) {
+        <button
+          (click)="closeModal()"
+          class="absolute top-4 right-4 text-gray-600 hover:text-gray-300 text-xl transition-colors leading-none"
+        >
+          ✕
+        </button>
+      }
 
-      <button (click)="closeModal()"
-              class="absolute top-4 right-4 text-gray-600 hover:text-gray-300
-                     text-xl transition-colors leading-none">
-        ✕
-      </button>
-
-      <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl
-                  mx-auto mb-5
-                  bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)]
-                  border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]">
+      <div
+        class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]"
+      >
         🎬
       </div>
 
@@ -250,8 +276,9 @@
       </h3>
 
       <!-- Movie detail rows -->
-      <div class="bg-gray-800/50 rounded-xl p-4 text-left space-y-2.5
-                  mb-6 border border-gray-700/50">
+      <div
+        class="bg-gray-800/50 rounded-xl p-4 text-left space-y-2.5 mb-6 border border-gray-700/50"
+      >
         <div class="flex justify-between text-sm">
           <span class="text-gray-500">Title</span>
           <span class="text-gray-200 font-medium">{{ movie?.title }}</span>
@@ -270,14 +297,13 @@
         </div>
         <div class="flex justify-between text-sm">
           <span class="text-gray-500">Duration</span>
-          <span class="text-gray-200">{{ movie?.duration }} min</span>
+          <span class="text-gray-200">{{ movie?.duration | duration }}</span>
         </div>
       </div>
 
       <button (click)="navigateToMovies()" class="btn-gold w-full py-2.5 rounded-lg text-sm">
         View All Movies →
       </button>
-
     </div>
   </div>
 }

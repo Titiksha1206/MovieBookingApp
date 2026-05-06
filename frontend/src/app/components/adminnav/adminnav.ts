@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-adminnav',
@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './adminnav.html',
   styleUrl: './adminnav.css',
 })
-export class Adminnav {}
+export class Adminnav implements OnInit {
+  constructor() {}
+
+  ngOnInit(): void {}
+}

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MovieService } from '../../services/movie-service';
 import { Router } from '@angular/router';
+import { Movie } from '../../models/movie';
 
 @Component({
   selector: 'app-userviewmovie',
@@ -9,32 +10,36 @@ import { Router } from '@angular/router';
   styleUrl: './userviewmovie.css',
 })
 export class Userviewmovie implements OnInit {
-   movies : any[] = [];
-  errorMessage : string = '';
+  movies: Movie[] = [];
+  loading = false;
+  errorMessage: string | null = null;
 
   constructor(
-    private movieService : MovieService,
-    private router : Router,
-  ) { }
+    private movieService: MovieService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loadMovies();
   }
 
-  loadMovies() {
-     this.movieService.getAllMovies().subscribe({
-      next : (data) => {
+  loadMovies(): void {
+    this.loading = true;
+    this.movieService.getAllMovies().subscribe({
+      next: (data) => {
         this.movies = data;
-        console.log(JSON.stringify(data));
-      } ,
-      error : (err) => {
-         console.log(err);
-         alert("Failed to load Movies");
-      }
-     })
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load movies. Please try again later.';
+        this.loading = false;
+      },
+    });
   }
 
-  navigateToBooking(movieId : number) {
-     this.router.navigate(['/user/bookMovie'], {queryParams:{movieId : movieId}});
+  navigateToBooking(movieId: number) {
+    this.router.navigate(['/user/bookMovie'], { queryParams: { movieId: movieId } });
   }
 }
