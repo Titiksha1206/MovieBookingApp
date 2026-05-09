@@ -19,6 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DurationPipe } from './pipes/duration-pipe';
 import { Adminmanage } from './components/adminmanage/adminmanage';
 import { Userseatselection } from './components/userseatselection/userseatselection';
+import { NotificationComponent } from './components/notification-component/notification-component';
+import { NotificationService } from './services/notification-service';
 
 @NgModule({
   declarations: [
@@ -38,11 +40,13 @@ import { Userseatselection } from './components/userseatselection/userseatselect
     DurationPipe,
     Adminmanage,
     Userseatselection,
+    NotificationComponent,
   ],
   imports: [BrowserModule, ReactiveFormsModule, FormsModule, AppRoutingModule],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withFetch()),
+    NotificationService,
   ],
   bootstrap: [App],
 })

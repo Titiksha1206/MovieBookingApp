@@ -15,21 +15,21 @@ import { Adminmanage } from './components/adminmanage/adminmanage';
 import { Userseatselection } from './components/userseatselection/userseatselection';
 
 const routes: Routes = [
-  {path:'', component : Home},
-  {path:'register', component:Registration},
-  {path:'login', component:Login},
-  {path:'admin/add/newMovies', component:Adminaddmovie},
-  {path:'admin/view/Movies' , component: Adminviewmovie},
-  {path:'admin/view/AllBookings', component: Adminviewbooking, canActivate:[adminGuard]},
-  {path:'user/view/Movies', component: Userviewmovie, canActivate:[userGuard]},
-  {path:'user/bookMovie', component: Userbookingmovie, canActivate:[userGuard] },
-  {path:'user/view/Mybookings', component: Userviewbooking},
-  { path: 'user/selectSeats', component: Userseatselection, canActivate: [userGuard] },
-  { path: 'admin/manage', component: Adminmanage }
+  { path: '', component: Home },
+  { path: 'register', component: Registration },
+  { path: 'login', component: Login },
+  { path: 'admin/add/newMovies', component: Adminaddmovie, canActivate: [adminGuard] },
+  { path: 'admin/view/Movies', component: Adminviewmovie, canActivate: [adminGuard] },
+  { path: 'admin/view/AllBookings', component: Adminviewbooking, canActivate: [adminGuard] },
+  { path: 'user/view/Movies', component: Userviewmovie },
+  { path: 'user/bookMovie', component: Userbookingmovie },
+  { path: 'user/view/Mybookings', component: Userviewbooking, canActivate: [userGuard] },
+  { path: 'user/selectSeats', component: Userseatselection },
+  { path: 'admin/manage', component: Adminmanage, canActivate: [adminGuard] },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,6 +18,7 @@ export class Navbar implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +39,7 @@ export class Navbar implements OnInit {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userId');
     this.authService.setUser(null);
-    //this.toastr.success("Logout Successfull", "Success");
+    this.notificationService.success('Logout successful');
     this.router.navigate(['/']);
   }
 }

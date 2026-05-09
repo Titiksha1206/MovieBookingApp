@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
-import { User } from '../../models/user';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +16,7 @@ export class Login implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {}
@@ -58,8 +59,29 @@ export class Login implements OnInit {
 
         // ✅ Check for saved return URL (from seat selection or any other page)
         const returnUrl = localStorage.getItem('returnUrl');
+
         if (returnUrl) {
           localStorage.removeItem('returnUrl'); // clear after use
+
+          // ✅ Prevent admin from accessing user routes
+          if (data.userRole === 'ADMIN' && returnUrl.includes('/user/')) {
+            this.notificationService.warning(
+              'Admins cannot access user pages. Redirecting to admin panel.',
+            );
+            this.router.navigate(['/admin/view/Movies']);
+            return;
+          }
+
+          // ✅ Prevent user from accessing admin routes
+          if (data.userRole === 'USER' && returnUrl.includes('/admin/')) {
+            this.notificationService.warning(
+              'Users cannot access admin pages. Redirecting to movies.',
+            );
+            this.router.navigate(['/user/view/Movies']);
+            return;
+          }
+
+          // ✅ Valid return URL for this role
           this.router.navigateByUrl(returnUrl);
         } else {
           // Default role‑based redirect
@@ -71,9 +93,8 @@ export class Login implements OnInit {
         }
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = 'Invalid username or password. Login Failed.';
-        alert(this.errorMessage);
+        this.notificationService.error(this.errorMessage);
       },
     });
   }

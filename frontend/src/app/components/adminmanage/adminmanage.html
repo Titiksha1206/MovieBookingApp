@@ -25,7 +25,9 @@
               class="text-xs font-bold px-2 py-0.5 rounded"
               [ngClass]="{
                 'bg-green-500 text-white': movie.cbfc === 'U',
-                'bg-yellow-500 text-black': movie.cbfc === 'U/A',
+                'bg-pink-500 text-white': movie.cbfc === 'UA7+',
+                'bg-purple-500 text-white': movie.cbfc === 'UA13+',
+                'bg-orange-500 text-white': movie.cbfc === 'UA16+',
                 'bg-red-500 text-white': movie.cbfc === 'A',
                 'bg-blue-500 text-white': movie.cbfc === 'S',
               }"
@@ -59,9 +61,8 @@
     {{ showForm ? '✕ Cancel' : '+ Add New Showtime' }}
   </button>
 
-  <!-- ════════════════════════════
-       ADD SHOWTIME FORM
-  ════════════════════════════ -->
+  <!-- ADD SHOWTIME FORM -->
+
   @if (showForm) {
     <div class="card p-6 mb-6">
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-5">
@@ -184,9 +185,8 @@
     </div>
   }
 
-  <!-- ════════════════════════════
-       SHOWTIMES LIST
-  ════════════════════════════ -->
+  <!-- SHOWTIMES LIST -->
+
   @if (showtimes.length > 0) {
     <div class="space-y-3">
       @for (showtime of showtimes; track showtime.showtimeId) {

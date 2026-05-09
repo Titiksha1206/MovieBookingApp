@@ -9,15 +9,18 @@ import com.example.backend.Entity.Movie;
 import com.example.backend.Entity.MovieDto;
 import com.example.backend.Exception.DuplicateMovieException;
 import com.example.backend.Exception.MovieNotFoundException;
+import com.example.backend.Repository.BookingRepo;
 import com.example.backend.Repository.MovieRepo;
 
 @Service
 public class MovieServiceImpl implements MovieService {
 
-    MovieRepo repo;
+    private final MovieRepo repo;
+    private final BookingRepo bookingRepo;
 
-    public MovieServiceImpl(MovieRepo repo) {
+    public MovieServiceImpl(MovieRepo repo, BookingRepo bookingRepo) {
         this.repo = repo;
+        this.bookingRepo = bookingRepo;
     }
 
     @Override
@@ -42,6 +45,12 @@ public class MovieServiceImpl implements MovieService {
         Movie existing = repo.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Movie not found with id: " + movieId));
 
+        // ✅ Check if there are any bookings for this movie
+        long bookingCount = bookingRepo.countByMovie_MovieId(movieId);
+        if (bookingCount > 0) {
+            throw new IllegalStateException(
+                    "Cannot update movie because it has " + bookingCount + " existing booking(s).");
+        }
         existing.setTitle(movie.getTitle());
         existing.setDuration(movie.getDuration());
         existing.setGenre(movie.getGenre());
@@ -68,6 +77,17 @@ public class MovieServiceImpl implements MovieService {
         if (!repo.existsById(movieId)) {
             throw new MovieNotFoundException("Movie not found with id: " + movieId);
         }
+        // ✅ Check for upcoming/ongoing bookings (today or future)
+        String today = java.time.LocalDate.now().toString(); // YYYY-MM-DD
+        boolean hasUpcomingBookings = bookingRepo.existsUpcomingBookingForMovie(movieId, today);
+
+        if (hasUpcomingBookings) {
+            long upcomingCount = bookingRepo.countUpcomingBookingsForMovie(movieId, today);
+            throw new IllegalStateException(
+                    "Cannot delete movie because it has " + upcomingCount
+                            + " upcoming booking(s) for shows today or in the future.");
+        }
+
         repo.deleteById(movieId);
         return true;
     }

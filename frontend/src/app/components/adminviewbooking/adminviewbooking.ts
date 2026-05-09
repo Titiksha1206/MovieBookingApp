@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BookingService } from '../../services/booking-service';
 import { Booking } from '../../models/booking';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-adminviewbooking',
@@ -16,6 +17,7 @@ export class Adminviewbooking implements OnInit {
   constructor(
     private bookingService: BookingService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -27,14 +29,12 @@ export class Adminviewbooking implements OnInit {
     this.bookingService.getAllBookings().subscribe({
       next: (data) => {
         this.bookings = data;
-
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = 'Failed to load bookings';
-        alert('Failed to load the Booking');
+        this.notificationService.error(this.errorMessage);
         this.isLoading = false;
       },
     });

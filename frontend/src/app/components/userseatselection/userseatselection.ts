@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShowtimeService } from '../../services/showtime-service';
 import { BookingService } from '../../services/booking-service';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-userseatselection',
@@ -28,6 +29,7 @@ export class Userseatselection implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -53,9 +55,8 @@ export class Userseatselection implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        console.error('Failed to load seats:', err);
         this.loadingSeats = false;
-        alert('Failed to load seats');
+        this.notificationService.error('Failed to load seats');
       },
     });
   }
@@ -102,7 +103,6 @@ export class Userseatselection implements OnInit {
     this.updateTotalCost();
     // Remove the draft after restoring (so it doesn't reappear on next refresh)
     localStorage.removeItem(this.DRAFT_KEY);
-    console.log('Draft restored:', this.selectedSeats);
   }
 
   toggleSeat(seat: any, category: any): void {
@@ -149,17 +149,33 @@ export class Userseatselection implements OnInit {
 
   registerBooking(): void {
     const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+
+    // ✅ Check if user is logged in
     if (!userId) {
-      // Not logged in → save current selection and redirect to login
+      // Save current selection and redirect to login
       if (this.selectedSeats.length > 0) {
         this.saveDraft();
       }
-      alert('Please login to book tickets.');
-
-      // Save current URL to return after login
+      this.notificationService.error('Please login to book tickets.');
       const currentUrl = this.router.url;
       localStorage.setItem('returnUrl', currentUrl);
-      this.router.navigate(['/login']);
+
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 900);
+      return;
+    }
+
+    // ✅ Check if logged-in user is ADMIN – prevent booking
+    if (userRole === 'ADMIN') {
+      this.notificationService.error('Admins cannot book tickets. Please use a user account.');
+      return;
+    }
+
+    // ✅ Check if seats are selected
+    if (this.selectedSeats.length === 0) {
+      this.notificationService.warning('Please select at least one seat');
       return;
     }
 
@@ -172,18 +188,20 @@ export class Userseatselection implements OnInit {
 
     this.bookingService.addBooking(booking, this.movieId, Number(userId)).subscribe({
       next: () => {
-        // Clear any leftover draft on success
         localStorage.removeItem(this.DRAFT_KEY);
-        this.router.navigate(['/user/view/Mybookings']);
+        this.notificationService.success('Booking successful!');
+        setTimeout(() => {
+          // ✅ Clear any stale returnUrl to prevent redirect loop
+          localStorage.removeItem('returnUrl');
+          this.router.navigate(['/user/view/Mybookings']);
+        }, 500);
       },
       error: (err) => {
-        console.error('Booking failed:', err);
         const errorMsg = err.error?.message || err.message || 'Booking Failed';
-        alert(`Booking Failed: ${errorMsg}`);
+        this.notificationService.error(errorMsg);
       },
     });
   }
-
   getCategoryIcon(name: string): string {
     const icons: any = {
       Classic: '🪑',

@@ -1,5 +1,4 @@
 <div class="max-w-xl mx-auto px-6 py-12">
-  <!-- Page Header -->
   <div class="flex items-center gap-3 mb-8">
     <div
       class="w-11 h-11 rounded-xl flex items-center justify-center text-xl bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]"
@@ -92,7 +91,7 @@
           CBFC Rating <span class="text-red-500">*</span>
         </label>
         <div class="grid grid-cols-4 gap-3 mt-2">
-          @for (rating of ['U', 'U/A', 'A', 'S']; track rating) {
+          @for (rating of ['U', 'UA7+', 'UA13+', 'UA16+', 'A', 'S']; track rating) {
             <button
               type="button"
               (click)="setCbfc(rating)"
@@ -110,10 +109,29 @@
 
         <!-- Rating descriptions -->
         <div class="mt-2 text-xs text-gray-600 space-y-0.5">
-          <p><span class="text-gray-500">U</span> — Unrestricted Public Exhibition</p>
-          <p><span class="text-gray-500">U/A</span> — Parental Guidance for under 12</p>
-          <p><span class="text-gray-500">A</span> — Restricted to Adults</p>
-          <p><span class="text-gray-500">S</span> — Restricted to specialised audiences</p>
+          <p>
+            <span class="text-green-500 font-semibold">U</span> (Universal): Suitable for all age
+            groups.
+          </p>
+          <p>
+            <span class="text-pink-500 font-semibold">UA7+</span> : Parental Guidance for under 7
+          </p>
+          <p>
+            <span class="text-purple-500 font-semibold">UA13+</span> : Parental Guidance for under
+            13
+          </p>
+          <p>
+            <span class="text-orange-500 font-semibold">UA16+</span> : Parental Guidance for under
+            16
+          </p>
+          <p>
+            <span class="text-red-500 font-semibold">A</span> (Adult): Restricted to Adults 18+
+            only.
+          </p>
+          <p>
+            <span class="text-blue-500 font-semibold">S</span> (Special Class): Restricted to
+            specialised audiences, such as doctors.
+          </p>
         </div>
         @if (cbfc.touched || cbfc.dirty) {
           <div class="error-text">
@@ -164,6 +182,38 @@
           <option value="Bengali">Bengali</option>
           <option value="Marathi">Marathi</option>
           <option value="Punjabi">Punjabi</option>
+          <option value="Haryanvi">Haryanvi</option>
+          <option value="Gujarati">Gujarati</option>
+          <option value="Odia">Odia</option>
+          <option value="Assamese">Assamese</option>
+          <option value="Bhojpuri">Bhojpuri</option>
+          <option value="Manipuri">Manipuri</option>
+          <option value="Urdu">Urdu</option>
+          <option value="Sanskrit">Sanskrit</option>
+          <option value="Konkani">Konkani</option>
+          <option value="Dogri">Dogri</option>
+          <option value="Kashmiri">Kashmiri</option>
+          <option value="Maithili">Maithili</option>
+          <option value="Nepali">Nepali</option>
+          <option value="Sindhi">Sindhi</option>
+          <option value="Santhali">Santhali</option>
+          <option value="Tulu">Tulu</option>
+          <option value="Rajasthani">Rajasthani</option>
+          <option value="Chhattisgarhi">Chhattisgarhi</option>
+          <option value="Korean">Korean</option>
+          <option value="Japanese">Japanese</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Thai">Thai</option>
+          <option value="Indonesian">Indonesian</option>
+          <option value="Vietnamese">Vietnamese</option>
+          <option value="Spanish">Spanish</option>
+          <option value="French">French</option>
+          <option value="German">German</option>
+          <option value="Italian">Italian</option>
+          <option value="Portuguese">Portuguese</option>
+          <option value="Russian">Russian</option>
+          <option value="Turkish">Turkish</option>
+          <option value="Arabic">Arabic</option>
         </select>
         @if (language.touched || language.dirty) {
           <div class="error-text">
@@ -288,12 +338,12 @@
           <span class="text-gray-200">{{ movie?.genre }}</span>
         </div>
         <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Language</span>
-          <span class="text-gray-200">{{ movie?.language }}</span>
-        </div>
-        <div class="flex justify-between text-sm">
           <span class="text-gray-500">CBFC</span>
           <span class="text-gray-200">{{ movie?.cbfc }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-500">Language</span>
+          <span class="text-gray-200">{{ movie?.language }}</span>
         </div>
         <div class="flex justify-between text-sm">
           <span class="text-gray-500">Duration</span>

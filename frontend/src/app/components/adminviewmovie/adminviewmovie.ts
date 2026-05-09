@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Movie } from '../../models/movie';
 import { MovieService } from '../../services/movie-service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-adminviewmovie',
@@ -10,6 +11,8 @@ import { Router } from '@angular/router';
   styleUrl: './adminviewmovie.css',
 })
 export class Adminviewmovie implements OnInit {
+  allMovies: Movie[] = [];
+  searchTerm: string = '';
   movies: Movie[] = [];
   errorMessage: string = '';
   showDeleteModal = false;
@@ -20,6 +23,7 @@ export class Adminviewmovie implements OnInit {
     private movieService: MovieService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -30,16 +34,31 @@ export class Adminviewmovie implements OnInit {
     this.isLoading = true;
     this.movieService.getAllMovies().subscribe({
       next: (data) => {
+        this.allMovies = data;
         this.movies = data;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        alert('Failed to load movies');
-        console.error(err);
+      error: () => {
+        this.notificationService.error('Failed to load movies');
         this.isLoading = false;
       },
     });
+  }
+
+  // ✅ Search method
+  onSearch(): void {
+    if (!this.searchTerm.trim()) {
+      this.movies = this.allMovies;
+      return;
+    }
+    const term = this.searchTerm.toLowerCase().trim();
+    this.movies = this.allMovies.filter((movie) => movie.title.toLowerCase().includes(term));
+  }
+  // ✅ Clear search
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.movies = this.allMovies;
   }
 
   openDeleteModal(id: number): void {
@@ -62,12 +81,17 @@ export class Adminviewmovie implements OnInit {
   deleteMovie(movieId: number): void {
     this.movieService.deleteMovie(movieId).subscribe({
       next: () => {
-        alert('Movie deleted successfully');
         this.loadMovies();
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        alert('Failed to delete movie');
-        console.error(err);
+        let errorMessage = 'Failed to delete movie';
+        if (err.status === 409) {
+          errorMessage = 'Cannot delete movie because it has existing bookings.';
+        }
+
+        // ✅ Show error notification FIRST
+        this.notificationService.error(errorMessage, 3000);
       },
     });
   }

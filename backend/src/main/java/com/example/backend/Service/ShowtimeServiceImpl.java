@@ -14,6 +14,7 @@ import com.example.backend.Entity.ShowTime;
 import com.example.backend.Exception.DuplicateShowtimeException;
 import com.example.backend.Exception.MovieNotFoundException;
 import com.example.backend.Exception.ShowtimeNotFoundException;
+import com.example.backend.Repository.BookingRepo;
 import com.example.backend.Repository.MovieRepo;
 import com.example.backend.Repository.ShowtimeRepo;
 
@@ -22,15 +23,18 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     private final ShowtimeRepo showtimeRepo;
     private final MovieRepo movieRepo;
+    private final BookingRepo bookingRepo;
 
     private static final int SEATS_PER_ROW = 15;
     private static final String ROW_LABELS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public ShowtimeServiceImpl(
             ShowtimeRepo showtimeRepo,
-            MovieRepo movieRepo) {
+            MovieRepo movieRepo,
+            BookingRepo bookingRepo) {
         this.showtimeRepo = showtimeRepo;
         this.movieRepo = movieRepo;
+        this.bookingRepo = bookingRepo;
     }
 
     @Override
@@ -46,8 +50,8 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 showtime.getShowTime())) {
             throw new DuplicateShowtimeException(
                     "Showtime already exists for movie '" + movie.getTitle() +
-            "' at " + showtime.getTheater() + " on " + showtime.getShowDate() +
-            " at " + showtime.getShowTime());
+                            "' at " + showtime.getTheater() + " on " + showtime.getShowDate() +
+                            " at " + showtime.getShowTime());
         }
         showtime.setMovie(movie);
         showtime.setAvailableSeats(showtime.getTotalSeats());
@@ -78,6 +82,13 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .orElseThrow(() -> new ShowtimeNotFoundException(
                         "Showtime not found with id: " + showId));
         Long movieId = existing.getMovie().getMovieId();
+
+        // ✅ Check if there are any bookings for this showtime
+        long bookingCount = bookingRepo.countByShowtime_ShowtimeId(showId);
+        if (bookingCount > 0) {
+            throw new IllegalStateException(
+                    "Cannot update showtime because it has " + bookingCount + " existing booking(s).");
+        }
         // Check if updating to a theater/date/time that conflicts with another showtime
         boolean conflict = showtimeRepo.existsByMovie_MovieIdAndTheaterAndShowDateAndShowTime(
                 movieId,
@@ -156,6 +167,11 @@ public class ShowtimeServiceImpl implements ShowtimeService {
             throw new ShowtimeNotFoundException("Showtime not found with id: " + showId);
         }
 
+        long bookingCount = bookingRepo.countByShowtime_ShowtimeId(showId);
+        if (bookingCount > 0) {
+            throw new IllegalStateException(
+                    "Cannot delete showtime because it has " + bookingCount + " existing booking(s).");
+        }
         showtimeRepo.deleteById(showId);
         return true;
     }

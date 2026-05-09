@@ -3,6 +3,7 @@ import { Showtime } from '../../models/showtime';
 import { MovieService } from '../../services/movie-service';
 import { ShowtimeService } from '../../services/showtime-service';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-adminmanage',
@@ -56,6 +57,7 @@ export class Adminmanage implements OnInit {
     private showtimeService: ShowtimeService,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +86,9 @@ export class Adminmanage implements OnInit {
         this.movie = data;
         this.cdr.detectChanges();
       },
-      error: (err: any) => console.error('Failed to load movie', err),
+      error: () => {
+        this.notificationService.error('Failed to load movie details');
+      },
     });
   }
 
@@ -94,7 +98,9 @@ export class Adminmanage implements OnInit {
         this.showtimes = data.filter((s: any) => s.movie?.movieId === this.movieId);
         this.cdr.detectChanges();
       },
-      error: (err: any) => console.error('Failed to load showtimes', err),
+      error: () => {
+        this.notificationService.error('Failed to load showtimes');
+      },
     });
   }
 
@@ -108,26 +114,26 @@ export class Adminmanage implements OnInit {
 
   addShowtime(): void {
     if (!this.newTheater || !this.newDate || !this.newTime) {
-      alert('Please fill theater, date and time');
+      this.notificationService.warning('Please fill theater, date and time');
       return;
     }
 
     const chosenCategories = this.selectedCategories.filter((c) => c.selected);
 
     if (chosenCategories.length === 0) {
-      alert('Please select at least one seat category');
+      this.notificationService.warning('Please select at least one seat category');
       return;
     }
 
     const hasInvalidPrice = chosenCategories.some((c) => !c.price || c.price <= 0);
     if (hasInvalidPrice) {
-      alert('Please enter a valid price for all selected categories');
+      this.notificationService.warning('Please enter a valid price for all selected categories');
       return;
     }
 
     const hasInvalidSeats = chosenCategories.some((c) => !c.totalSeats || c.totalSeats <= 0);
     if (hasInvalidSeats) {
-      alert('Please enter valid seat count for all selected categories');
+      this.notificationService.warning('Please enter valid seat count for all selected categories');
       return;
     }
 
@@ -148,10 +154,40 @@ export class Adminmanage implements OnInit {
 
     this.showtimeService.addShowtime(this.movieId, dto).subscribe({
       next: () => {
+        this.notificationService.success('Showtime added successfully');
         this.loadShowtimes();
         this.resetForm();
       },
-      error: () => alert('Failed to add showtime'),
+      error: (err) => {
+         // ✅ Extract error message properly
+      let errorMessage = 'Failed to add showtime';
+      
+      if (err.error) {
+        // Case 1: error.error is a string
+        if (typeof err.error === 'string') {
+          errorMessage = err.error;
+        }
+        // Case 2: error.error has a message property
+        else if (err.error.message) {
+          errorMessage = err.error.message;
+        } else if (err.error.error && err.error.error.message) {
+          errorMessage = err.error.error.message;
+        }
+      }
+      // Case 4: err.message exists
+      else if (err.message) {
+        errorMessage = err.message;
+      }
+       if (err.status === 409) {
+        if (errorMessage.includes('Showtime already exists') || errorMessage.includes('duplicate')) {
+          errorMessage = 'A showtime with this theater, date, and time already exists.';
+        } else if (errorMessage.includes('booking')) {
+          errorMessage = 'Cannot modify showtime because it has existing bookings.';
+        }
+      }
+      
+      this.notificationService.error(errorMessage);
+      },
     });
   }
 
@@ -216,14 +252,14 @@ export class Adminmanage implements OnInit {
 
   saveEdit(): void {
     if (!this.editTheater || !this.editDate || !this.editTime) {
-      alert('Please fill theater, date and time');
+      this.notificationService.warning('Please fill theater, date and time');
       return;
     }
 
     const chosenCategories = this.editSelectedCategories.filter((c) => c.selected);
 
     if (chosenCategories.length === 0) {
-      alert('Please select at least one seat category');
+      this.notificationService.warning('Please select at least one seat category');
       return;
     }
 
@@ -245,11 +281,35 @@ export class Adminmanage implements OnInit {
 
     this.showtimeService.updateShowtime(this.editingShowtimeId!, dto).subscribe({
       next: () => {
+        this.notificationService.success('Showtime updated successfully');
         this.loadShowtimes();
         this.cdr.detectChanges();
         this.cancelEdit();
       },
-      error: () => alert('Failed to update showtime'),
+      error: (err) => {
+        // ✅ Properly extract error message
+        let errorMessage = 'Failed to update showtime';
+
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error.error && err.error.error.message) {
+            errorMessage = err.error.error.message;
+          }
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        if (err.status === 409) {
+          if (errorMessage.includes('Another showtime already exists')) {
+            errorMessage = 'A showtime with this theater, date, and time already exists.';
+          } else if (errorMessage.includes('existing booking')) {
+            errorMessage = 'Cannot update showtime because it has existing bookings.';
+          }
+        }
+        this.notificationService.error(errorMessage);
+      },
     });
   }
   // ── Delete Showtime ──
@@ -273,8 +333,22 @@ export class Adminmanage implements OnInit {
 
   deleteShowtime(showtimeId: number): void {
     this.showtimeService.deleteShowtime(showtimeId).subscribe({
-      next: () => this.loadShowtimes(),
-      error: () => alert('Failed to delete showtime'),
+      next: () => {
+        (this.loadShowtimes(), this.notificationService.success('Showtime deleted successfully'));
+      },
+      error: (err) => {
+        // ✅ Show proper error message for bookings
+        if (err.status === 409) {
+          const errorMsg =
+            err.error?.message || 'Cannot delete showtime because it has existing bookings.';
+          this.notificationService.error(errorMsg);
+        } else if (err.status === 404) {
+          this.notificationService.error('Showtime not found.');
+        } else {
+          const errorMsg = err.error?.message || err.message || 'Failed to delete showtime';
+          this.notificationService.error(errorMsg);
+        }
+      },
     });
   }
 

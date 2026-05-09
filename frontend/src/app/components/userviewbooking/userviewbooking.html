@@ -50,15 +50,13 @@
                 {{ booking?.seatCount ?? 0 }} ticket{{ (booking?.seatCount ?? 0) > 1 ? 's' : '' }}
               </p>
 
-              <!-- Genre + Duration -->
-              <!-- <div class="flex items-center gap-2 flex-wrap">
+              <!-- Genre -->
+              <div class="flex items-center gap-2 flex-wrap mb-3">
                 @if (booking.movie.genre) {
                   <span class="badge">{{ booking.movie.genre }}</span>
                 }
-                <span class="text-xs text-gray-600">
-                  {{ booking.movie.duration | duration }} 
-                </span>
-              </div> -->
+              </div>
+              
 
               <div class="flex items-center gap-2 mt-1 flex-wrap">
                 @if (booking.movie.cbfc) {
@@ -66,7 +64,9 @@
                     class="text-xs font-bold px-2 py-0.5 rounded"
                     [ngClass]="{
                       'bg-green-500 text-white': booking.movie.cbfc === 'U',
-                      'bg-yellow-500 text-black': booking.movie.cbfc === 'U/A',
+                      'bg-pink-500 text-white': booking.movie.cbfc === 'UA7+',
+                      'bg-purple-500 text-white': booking.movie.cbfc === 'UA13+',
+                      'bg-orange-500 text-white': booking.movie.cbfc === 'UA16+',
                       'bg-red-500 text-white': booking.movie.cbfc === 'A',
                       'bg-blue-500 text-white': booking.movie.cbfc === 'S',
                     }"
@@ -158,14 +158,14 @@
             </span>
 
             <!-- Cancel button – only if not already cancelled -->
-            @if (booking.status !== 'CANCELLED') {
+            <!-- @if (booking.status !== 'CANCELLED') {
               <button
                 (click)="cancelBooking(booking.bookingId)"
                 class="text-sm text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1"
               >
                 Cancel ticket →
               </button>
-            }
+            } -->
           </div>
         </div>
       }
@@ -185,7 +185,4 @@
       </div>
     }
   }
-
-  <!-- Spacer for fixed bottom bar (if any) -->
-  <div class="h-4"></div>
 </div>

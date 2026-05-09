@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angu
 import { BookingService } from '../../services/booking-service';
 import { Booking } from '../../models/booking';
 import { isPlatformBrowser } from '@angular/common';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-userviewbooking',
@@ -18,6 +19,7 @@ export class Userviewbooking implements OnInit {
   constructor(
     private bookingService: BookingService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
@@ -30,6 +32,7 @@ export class Userviewbooking implements OnInit {
 
     if (!id) {
       this.errorMessage = 'Please log in to view your bookings.';
+      this.notificationService.error(this.errorMessage);
       this.isLoading = false;
       return;
     }
@@ -48,27 +51,26 @@ export class Userviewbooking implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.log(err);
         const message = err.error?.message || 'Failed to load bookings. Please try again later.';
         this.errorMessage = message;
         this.isLoading = false;
-        alert(message);
+        this.notificationService.error(message);
       },
     });
   }
 
-  cancelBooking(bookingId: number): void {
-    this.bookingService.deleteBooking(bookingId).subscribe({
-      next: () => {
-        alert('Cancel booking Successfull');
-        this.loadUserBookings();
-      },
-      error: (err) => {
-        console.log(err);
-        const message = err.error?.message || 'Failed to cancel booking. Please try again.';
-        this.errorMessage = message;
-        alert(message);
-      },
-    });
-  }
+  // cancelBooking(bookingId: number): void {
+  //   this.bookingService.deleteBooking(bookingId).subscribe({
+  //     next: () => {
+  //       alert('Cancel booking Successfull');
+  //       this.loadUserBookings();
+  //     },
+  //     error: (err) => {
+  //       console.log(err);
+  //       const message = err.error?.message || 'Failed to cancel booking. Please try again.';
+  //       this.errorMessage = message;
+  //       alert(message);
+  //     },
+  //   });
+  // }
 }

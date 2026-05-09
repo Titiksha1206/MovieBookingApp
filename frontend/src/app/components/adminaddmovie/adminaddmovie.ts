@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Movie } from '../../models/movie';
 import { MovieService } from '../../services/movie-service';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-adminaddmovie',
@@ -27,6 +28,7 @@ export class Adminaddmovie implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -74,8 +76,13 @@ export class Adminaddmovie implements OnInit {
         this.isSubmitting = false;
       },
       error: (err) => {
-        console.error(err);
-        alert('Update failed');
+        if (err.status === 409) {
+          this.notificationService.error(
+            err.error?.message || 'Cannot update movie because it has existing bookings.',
+          );
+        } else {
+          this.notificationService.error('Update failed: ' + (err.error?.message || err.message));
+        }
         this.isSubmitting = false;
       },
     });
@@ -96,9 +103,8 @@ export class Adminaddmovie implements OnInit {
           this.previewUrl = '';
         }, 0);
       },
-      error: (err) => {
-        console.error(err);
-        alert('Failed to add movie');
+      error: () => {
+        this.notificationService.error('Failed to add movie');
         setTimeout(() => {
           this.isSubmitting = false;
         }, 0);
@@ -117,7 +123,7 @@ export class Adminaddmovie implements OnInit {
         this.addMovie(this.movieForm.value);
       }
     } else {
-      alert('Please fill all required fields');
+      this.notificationService.warning('Please fill all required fields');
     }
   }
 

@@ -3,6 +3,7 @@ import { Movie } from '../../models/movie';
 import { MovieService } from '../../services/movie-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShowtimeService } from '../../services/showtime-service';
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-userbookingmovie',
@@ -29,6 +30,7 @@ export class Userbookingmovie implements OnInit {
     private activatedRoute: ActivatedRoute,
     private showtimeService: ShowtimeService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -67,8 +69,7 @@ export class Userbookingmovie implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error(err);
-        alert('Loading Movie failed');
+        this.notificationService.error('Failed to load movie details');
       },
     });
   }
@@ -80,8 +81,7 @@ export class Userbookingmovie implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error(err);
-        alert('Loading Showtimes failed');
+        this.notificationService.error('Failed to load showtimes');
       },
     });
   }
