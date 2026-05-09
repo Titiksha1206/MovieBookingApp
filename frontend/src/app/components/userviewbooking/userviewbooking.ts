@@ -59,18 +59,18 @@ export class Userviewbooking implements OnInit {
     });
   }
 
-  // cancelBooking(bookingId: number): void {
-  //   this.bookingService.deleteBooking(bookingId).subscribe({
-  //     next: () => {
-  //       alert('Cancel booking Successfull');
-  //       this.loadUserBookings();
-  //     },
-  //     error: (err) => {
-  //       console.log(err);
-  //       const message = err.error?.message || 'Failed to cancel booking. Please try again.';
-  //       this.errorMessage = message;
-  //       alert(message);
-  //     },
-  //   });
-  // }
+  cancelBooking(bookingId: number): void {
+    this.bookingService.deleteBooking(bookingId).subscribe({
+      next: () => {
+       this.notificationService.success('Booking cancelled successfully.');
+        this.loadUserBookings();
+      },
+      error: (err) => {
+        console.log(err);
+        const message = err.error?.message || 'Failed to cancel booking. Please try again.';
+        this.errorMessage = message;
+        this.notificationService.error(message);
+      },
+    });
+  }
 }

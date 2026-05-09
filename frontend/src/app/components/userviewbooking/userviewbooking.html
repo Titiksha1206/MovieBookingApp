@@ -158,14 +158,14 @@
             </span>
 
             <!-- Cancel button – only if not already cancelled -->
-            <!-- @if (booking.status !== 'CANCELLED') {
+            @if (booking.status !== 'CANCELLED') {
               <button
                 (click)="cancelBooking(booking.bookingId)"
                 class="text-sm text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1"
               >
                 Cancel ticket →
               </button>
-            } -->
+            }
           </div>
         </div>
       }
