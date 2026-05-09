@@ -150,9 +150,10 @@ export class Userseatselection implements OnInit {
   registerBooking(): void {
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
+    const token = localStorage.getItem('token');
 
     // ✅ Check if user is logged in
-    if (!userId) {
+    if (!userId || !token) {
       // Save current selection and redirect to login
       if (this.selectedSeats.length > 0) {
         this.saveDraft();
