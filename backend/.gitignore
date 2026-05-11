@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Add these lines
+.env
+.env.*
+!.env.example
+application-prod.properties

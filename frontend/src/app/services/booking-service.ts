@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Booking } from '../models/booking';
 import { Observable } from 'rxjs/internal/Observable';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BookingService {
-  public baseUrl = "http://localhost:8080/api/booking";
+  public baseUrl = `${environment.apiUrl}/booking`;
   constructor(private httpClient : HttpClient) { }
 
   addBooking(booking : Booking,movieId:number,userId:number) : Observable<Booking> {

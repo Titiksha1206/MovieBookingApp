@@ -1,5 +1,7 @@
 package com.example.backend.Configuration;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -36,8 +41,9 @@ AuthenticationProvider authenticationProvider() {
 @Bean
 SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
       return http.csrf( csrf -> csrf.disable())
-                 .cors(cors -> cors.disable())
+                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                  .authorizeHttpRequests(auth -> auth
+                 .requestMatchers("/api/user/register", "/api/user/login").permitAll()
                  .anyRequest().permitAll())
                  .sessionManagement(session -> session
                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,6 +53,21 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
                  .build();
 } 
 
+ @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+            System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "http://localhost:4200").split(",")
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+         source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 @Bean
    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();

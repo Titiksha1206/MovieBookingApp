@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { User } from '../models/user';
 import { Login } from '../models/login';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,7 @@ export class AuthService {
     }
   }
   
-  public baseUrl = "http://localhost:8080/api/user";
+  public baseUrl = `${environment.apiUrl}/user`;
   registerUser(user : User) : Observable<User> {
      return this.httpClient.post<User>(this.baseUrl  + "/register", user);
   }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,11 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtils {
 
-     private String SECRET = "sjvbdhjdvcndcndcddscdcdscdcdscdcdscdhjdbjdsdcdcdncdsbcdcjdbcjhdsbchjdbcdbcbdsjcjdcjdhcdscdbcjdscdhcdhcjdssaklksackjdjcjhdbcdshcdscdhcdsc";
+     @Value("${jwt.secret:sjvbdhjdvcndcndcddscdcdscdcdscdcdscdhjdbjdsdcdcdncdsbcdcjdbcjhdsbchjdbcdbcbdsjcjdcjdhcdscdbcjdscdhcdhcjdssaklksackjdjcjhdbcdshcdscdhcdsc}")
+      private String SECRET;
 
+    @Value("${jwt.expiration:86400000}")
+    private long EXPIRATION;
    public Claims extractAllClaims(String token){
     return Jwts.parserBuilder()
                .setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET)))
@@ -50,7 +54,7 @@ public class JwtUtils {
                  .setClaims(claims)
                  .setSubject(subject)
                  .setIssuedAt(new Date(System.currentTimeMillis()))
-                 .setExpiration(new Date(System.currentTimeMillis() + 1000*60*60*3))
+                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                  .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET)), SignatureAlgorithm.HS256)
                  .compact();
    }

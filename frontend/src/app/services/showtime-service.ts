@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Showtime } from '../models/showtime';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -9,7 +10,7 @@ import { Showtime } from '../models/showtime';
 })
 export class ShowtimeService {
 
-  private baseUrl = "http://localhost:8080/api/showtime";
+  private baseUrl =  `${environment.apiUrl}/showtime`;
 
   constructor(private http: HttpClient) {}
 

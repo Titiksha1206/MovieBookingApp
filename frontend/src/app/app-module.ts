@@ -1,6 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Adminaddmovie } from './components/adminaddmovie/adminaddmovie';
@@ -21,6 +21,7 @@ import { Adminmanage } from './components/adminmanage/adminmanage';
 import { Userseatselection } from './components/userseatselection/userseatselection';
 import { NotificationComponent } from './components/notification-component/notification-component';
 import { NotificationService } from './services/notification-service';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,11 @@ import { NotificationService } from './services/notification-service';
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withFetch()),
     NotificationService,
+    {
+      provide: HTTP_INTERCEPTORS,      // ✅ Register the interceptor
+      useClass: AuthInterceptor,
+      multi: true                      // ✅ Allow multiple interceptors
+    }
   ],
   bootstrap: [App],
 })
