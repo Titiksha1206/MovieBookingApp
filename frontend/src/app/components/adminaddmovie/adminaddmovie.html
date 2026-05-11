@@ -302,22 +302,21 @@
 
 <!-- Success Modal -->
 @if (showModal) {
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/75 backdrop-blur-md"
-  >
-    <div class="card max-w-sm w-full p-8 text-center relative">
+  <div class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/75 backdrop-blur-md">
+    <div class="card max-w-sm w-full p-6 text-center relative">
+      <!-- Close button (only for add mode) -->
       @if (!isEditing) {
         <button
           (click)="closeModal()"
-          class="absolute top-4 right-4 text-gray-600 hover:text-gray-300 text-xl transition-colors leading-none"
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-xl transition-colors leading-none"
+          aria-label="Close"
         >
           ✕
         </button>
       }
 
-      <div
-        class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5 bg-[color-mix(in_srgb,var(--color-gold-500)_10%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_20%,transparent)]"
-      >
+      <!-- Modal Icon -->
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 bg-gold-500/10 border border-gold-500/20">
         🎬
       </div>
 
@@ -325,33 +324,31 @@
         {{ modalMessage }}
       </h3>
 
-      <!-- Movie detail rows -->
-      <div
-        class="bg-gray-800/50 rounded-xl p-4 text-left space-y-2.5 mb-6 border border-gray-700/50"
-      >
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Title</span>
-          <span class="text-gray-200 font-medium">{{ movie?.title }}</span>
+      <!-- Movie details (key-value pairs, left aligned) -->
+      <div class="bg-gray-800/50 rounded-xl p-4 text-left space-y-2 mb-6 border border-gray-700/50">
+        <div class="flex flex-wrap justify-between gap-2 text-sm">
+          <span class="text-gray-400 font-medium">Title:</span>
+          <span class="text-gray-200 text-right wrap-break-word max-w-[65%]">{{ movie?.title }}</span>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Genre</span>
-          <span class="text-gray-200">{{ movie?.genre }}</span>
+        <div class="flex flex-wrap justify-between gap-2 text-sm">
+          <span class="text-gray-400 font-medium">Genre:</span>
+          <span class="text-gray-200 text-right wrap-break-word max-w-[65%]">{{ movie?.genre }}</span>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">CBFC</span>
+        <div class="flex flex-wrap justify-between gap-2 text-sm">
+          <span class="text-gray-400 font-medium">CBFC:</span>
           <span class="text-gray-200">{{ movie?.cbfc }}</span>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Language</span>
+        <div class="flex flex-wrap justify-between gap-2 text-sm">
+          <span class="text-gray-400 font-medium">Language:</span>
           <span class="text-gray-200">{{ movie?.language }}</span>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-gray-500">Duration</span>
+        <div class="flex flex-wrap justify-between gap-2 text-sm">
+          <span class="text-gray-400 font-medium">Duration:</span>
           <span class="text-gray-200">{{ movie?.duration | duration }}</span>
         </div>
       </div>
 
-      <button (click)="navigateToMovies()" class="btn-gold w-full py-2.5 rounded-lg text-sm">
+      <button (click)="navigateToMovies()" class="btn-gold w-full py-2.5 rounded-lg text-sm font-semibold">
         View All Movies →
       </button>
     </div>

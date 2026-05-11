@@ -73,7 +73,10 @@ export class Adminaddmovie implements OnInit {
         this.modalMessage = 'Movie updated successfully!';
         this.showModal = true;
         this.cdr.detectChanges();
-        this.isSubmitting = false;
+        // ✅ Delay resetting isSubmitting to avoid ExpressionChangedError
+        setTimeout(() => {
+          this.isSubmitting = false;
+        }, 0);
       },
       error: (err) => {
         if (err.status === 409) {
@@ -83,7 +86,9 @@ export class Adminaddmovie implements OnInit {
         } else {
           this.notificationService.error('Update failed: ' + (err.error?.message || err.message));
         }
-        this.isSubmitting = false;
+        setTimeout(() => {
+          this.isSubmitting = false;
+        }, 0);
       },
     });
   }

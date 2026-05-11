@@ -17,7 +17,7 @@
       }
       <div class="min-w-0">
         <div class="badge-gold mb-1.5">Now Booking</div>
-        <h1 class="font-display text-xl font-bold text-white truncate">
+        <h1 class="font-display text-xl font-bold text-white wrap-break-word max-w-full">
           {{ movie.title }}
         </h1>
         <div class="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -40,6 +40,9 @@
           <span class="text-xs text-gray-500">{{ movie.language }}</span>
           <span class="text-xs text-gray-600">|</span>
           <span class="text-xs text-gray-500">{{ movie.duration | duration }}</span>
+        </div>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-xs text-gray-500 wrap-break-word max-w-full">{{ movie.genre }}</span>
         </div>
       </div>
     </div>
