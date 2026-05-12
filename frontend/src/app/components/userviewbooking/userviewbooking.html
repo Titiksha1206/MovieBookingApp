@@ -56,7 +56,6 @@
                   <span class="badge">{{ booking.movie.genre }}</span>
                 }
               </div>
-              
 
               <div class="flex items-center gap-2 mt-1 flex-wrap">
                 @if (booking.movie.cbfc) {
@@ -161,6 +160,9 @@
             @if (booking.status !== 'CANCELLED') {
               <button
                 (click)="cancelBooking(booking.bookingId)"
+                [disabled]="isCancelling"
+                [class.cursor-not-allowed]="isCancelling"
+                [attr.title]="isCancelling ? 'Cancelling in progress...' : 'Cancel ticket'"
                 class="text-sm text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1"
               >
                 Cancel ticket →

@@ -12,6 +12,7 @@ import { NotificationService } from '../../services/notification-service';
 })
 export class Registration implements OnInit {
   form!: FormGroup;
+  isSubmitting = false;
   constructor(
     private builder: FormBuilder,
     private authSevice: AuthService,
@@ -22,9 +23,26 @@ export class Registration implements OnInit {
   ngOnInit(): void {
     this.form = this.builder.group(
       {
-        username: ['', Validators.required],
+        username: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(20),
+            Validators.pattern(/^[a-zA-Z0-9._]+$/),
+          ],
+        ],
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            ),
+          ],
+        ],
         confirmPassword: ['', Validators.required],
         mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
         userRole: ['', Validators.required],
@@ -70,16 +88,41 @@ export class Registration implements OnInit {
   }
 
   register() {
-    if (this.form.valid) {
-      this.authSevice.registerUser(this.form.value).subscribe({
-        next: (data) => {
-          this.notificationService.success('Registration successful');
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          this.notificationService.error('Registration failed');
-        },
-      });
-    }
+    if (this.form.invalid || this.isSubmitting) return;
+
+    this.isSubmitting = true;
+    this.authSevice.registerUser(this.form.value).subscribe({
+      next: () => {
+        this.notificationService.success('Registration successful');
+        this.router.navigate(['/login']);
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        let errorMessage = 'Registration failed. Please try again.';
+        this.isSubmitting = false;
+
+        // ✅ Parse error response
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error.error?.message) {
+            errorMessage = err.error.error.message;
+          }
+        }
+
+        // Handle specific HTTP status codes
+        if (err.status === 409) {
+          errorMessage = 'Username already exists. Please choose another.';
+        } else if (err.status === 400) {
+          errorMessage = 'Invalid input. Please check all fields.';
+        } else if (err.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+
+        this.notificationService.error(errorMessage);
+      },
+    });
   }
 }

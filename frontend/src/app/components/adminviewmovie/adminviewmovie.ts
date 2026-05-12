@@ -18,6 +18,7 @@ export class Adminviewmovie implements OnInit {
   showDeleteModal = false;
   selectedMovieId: number | null = null;
   isLoading = true;
+  isDeleting: boolean = false;
 
   constructor(
     private movieService: MovieService,
@@ -62,6 +63,7 @@ export class Adminviewmovie implements OnInit {
   }
 
   openDeleteModal(id: number): void {
+    if (this.isDeleting) return;
     this.selectedMovieId = id;
     this.showDeleteModal = true;
   }
@@ -79,10 +81,13 @@ export class Adminviewmovie implements OnInit {
   }
 
   deleteMovie(movieId: number): void {
+    this.isDeleting = true;
     this.movieService.deleteMovie(movieId).subscribe({
       next: () => {
         this.loadMovies();
         this.cdr.detectChanges();
+        this.notificationService.success('Movie deleted successfully');
+        this.isDeleting = false;
       },
       error: (err) => {
         let errorMessage = 'Failed to delete movie';
@@ -92,6 +97,7 @@ export class Adminviewmovie implements OnInit {
 
         // ✅ Show error notification FIRST
         this.notificationService.error(errorMessage, 3000);
+        this.isDeleting = false;
       },
     });
   }

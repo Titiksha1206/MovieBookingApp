@@ -19,6 +19,7 @@ export class Userseatselection implements OnInit {
   selectedSeats: any[] = [];
   loadingSeats: boolean = true;
   totalCost: number = 0;
+  isBooking: boolean = false;
 
   // Storage keys
   private readonly DRAFT_KEY = 'booking_draft';
@@ -153,6 +154,7 @@ export class Userseatselection implements OnInit {
     const token = localStorage.getItem('token');
 
     // ✅ Check if user is logged in
+
     if (!userId || !token) {
       // Save current selection and redirect to login
       if (this.selectedSeats.length > 0) {
@@ -180,6 +182,9 @@ export class Userseatselection implements OnInit {
       return;
     }
 
+    // ✅ Prevent multiple clicks
+    if (this.isBooking) return;
+    this.isBooking = true;
     const booking: any = {
       seatCount: this.selectedSeats.length,
       totalCost: this.totalCost,
@@ -196,10 +201,12 @@ export class Userseatselection implements OnInit {
           localStorage.removeItem('returnUrl');
           this.router.navigate(['/user/view/Mybookings']);
         }, 500);
+        this.isBooking = false;
       },
       error: (err) => {
         const errorMsg = err.error?.message || err.message || 'Booking Failed';
         this.notificationService.error(errorMsg);
+        this.isBooking = false;
       },
     });
   }

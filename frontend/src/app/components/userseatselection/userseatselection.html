@@ -1,9 +1,9 @@
 <div class="max-w-4xl mx-auto px-4 py-8">
-
   <!-- Back Button -->
-  <button (click)="goBack()"
-          class="flex items-center gap-2 text-gray-400
-                 hover:text-white transition-colors mb-6 text-sm">
+  <button
+    (click)="goBack()"
+    class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 text-sm"
+  >
     ← Back to Showtimes
   </button>
 
@@ -16,16 +16,12 @@
   }
 
   @if (!loadingSeats) {
-
     <!-- Screen -->
     <div class="mb-10 text-center">
-      <div class="w-3/4 mx-auto h-2 bg-linear-to-r
-                  from-transparent via-gold-500
-                  to-transparent rounded-full mb-3 opacity-80">
-      </div>
-      <p class="text-xs text-gray-600 uppercase tracking-[0.25em]">
-        Screen this side
-      </p>
+      <div
+        class="w-3/4 mx-auto h-2 bg-linear-to-r from-transparent via-gold-500 to-transparent rounded-full mb-3 opacity-80"
+      ></div>
+      <p class="text-xs text-gray-600 uppercase tracking-[0.25em]">Screen this side</p>
     </div>
 
     <!-- No seats state -->
@@ -33,32 +29,24 @@
       <div class="text-center py-16 text-gray-600">
         <div class="text-5xl mb-3">🪑</div>
         <p class="text-sm">No seats found for this showtime</p>
-        <p class="text-xs text-gray-700 mt-1">
-          Admin needs to add seat categories
-        </p>
+        <p class="text-xs text-gray-700 mt-1">Admin needs to add seat categories</p>
       </div>
     }
 
     <!-- Seat Categories -->
     @for (category of seatCategories; track category.categoryId) {
       <div class="mb-10">
-
         <!-- Category Header -->
         <div class="flex items-center justify-between mb-5 px-4">
           <div class="flex items-center gap-2">
             <span class="text-xl">{{ getCategoryIcon(category.name) }}</span>
-            <span class="text-sm font-bold text-gray-200 uppercase
-                         tracking-widest">
+            <span class="text-sm font-bold text-gray-200 uppercase tracking-widest">
               {{ category.name }}
             </span>
           </div>
           <div class="flex items-center gap-3">
-            <span class="text-gold-400 font-bold">
-              ₹{{ category.price }}
-            </span>
-            <span class="text-xs text-gray-500">
-              {{ category.availableSeats }} left
-            </span>
+            <span class="text-gold-400 font-bold"> ₹{{ category.price }} </span>
+            <span class="text-xs text-gray-500"> {{ category.availableSeats }} left </span>
           </div>
         </div>
 
@@ -66,10 +54,8 @@
         <div class="space-y-2.5 overflow-x-auto pb-2">
           @for (row of getRows(category.seats); track row.rowLabel) {
             <div class="flex items-center gap-2 min-w-max px-4">
-
               <!-- Row Label -->
-              <span class="text-xs text-gray-600 font-mono w-5
-                           text-right shrink-0">
+              <span class="text-xs text-gray-600 font-mono w-5 text-right shrink-0">
                 {{ row.rowLabel }}
               </span>
 
@@ -78,7 +64,6 @@
               <!-- Seats with aisles -->
               <div class="flex gap-1.5">
                 @for (seat of row.seats; track seat.seatId) {
-
                   @if (showAisle(seat.seatNumber)) {
                     <div class="w-4 shrink-0"></div>
                   }
@@ -88,26 +73,23 @@
                     [disabled]="seat.status === 'BOOKED'"
                     [title]="row.rowLabel + seat.seatNumber"
                     [ngClass]="{
-                      'bg-gold-500 border-gold-600 text-black font-bold scale-95':
-                        isSeatSelected(seat.seatId),
+                      'bg-gold-500 border-gold-600 text-black font-bold scale-95': isSeatSelected(
+                        seat.seatId
+                      ),
                       'bg-gray-800 border-gray-700 text-gray-600 cursor-not-allowed opacity-40':
                         seat.status === 'BOOKED',
                       'bg-gray-800/60 border-gray-600 text-gray-400 hover:border-gold-500 hover:text-gold-400 hover:bg-[color-mix(in_srgb,var(--color-gold-500)_8%,transparent)]':
-                        seat.status === 'AVAILABLE' && !isSeatSelected(seat.seatId)
+                        seat.status === 'AVAILABLE' && !isSeatSelected(seat.seatId),
                     }"
-                    class="w-8 h-8 rounded-lg border text-xs font-semibold
-                           transition-all duration-150 shrink-0
-                           flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg border text-xs font-semibold transition-all duration-150 shrink-0 flex items-center justify-center"
+                  >
                     {{ seat.seatNumber }}
                   </button>
-
                 }
               </div>
-
             </div>
           }
         </div>
-
       </div>
 
       <!-- Divider between categories -->
@@ -117,68 +99,60 @@
     <!-- Legend -->
     <div class="flex items-center justify-center gap-8 mb-8">
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-gray-800/60 border
-                    border-gray-600"></div>
+        <div class="w-7 h-7 rounded-lg bg-gray-800/60 border border-gray-600"></div>
         <span class="text-xs text-gray-500">Available</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-gold-500
-                    border border-gold-600"></div>
+        <div class="w-7 h-7 rounded-lg bg-gold-500 border border-gold-600"></div>
         <span class="text-xs text-gray-500">Selected</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-gray-800 border
-                    border-gray-700 opacity-40"></div>
+        <div class="w-7 h-7 rounded-lg bg-gray-800 border border-gray-700 opacity-40"></div>
         <span class="text-xs text-gray-500">Booked</span>
       </div>
     </div>
-
   }
 
   <!-- ── Sticky Bottom Summary ── -->
   @if (selectedSeats.length > 0) {
-    <div class="fixed bottom-0 left-0 right-0 z-50
-                bg-cinema-900 border-t border-gray-800
-                px-4 py-4 shadow-2xl">
+    <div
+      class="fixed bottom-0 left-0 right-0 z-50 bg-cinema-900 border-t border-gray-800 px-4 py-4 shadow-2xl"
+    >
       <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
-
         <!-- Left: selected seats -->
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap gap-1.5 mb-1">
             @for (seat of selectedSeats; track seat.seatId) {
-              <span class="text-xs px-2 py-0.5 rounded-md
-                           bg-[color-mix(in_srgb,var(--color-gold-500)_12%,transparent)]
-                           border border-[color-mix(in_srgb,var(--color-gold-500)_25%,transparent)]
-                           text-gold-400 font-semibold">
+              <span
+                class="text-xs px-2 py-0.5 rounded-md bg-[color-mix(in_srgb,var(--color-gold-500)_12%,transparent)] border border-[color-mix(in_srgb,var(--color-gold-500)_25%,transparent)] text-gold-400 font-semibold"
+              >
                 {{ seat.rowLabel }}{{ seat.seatNumber }}
               </span>
             }
           </div>
-          <p class="text-xs text-gray-500">
-            {{ selectedSeats.length }} seat(s) selected
-          </p>
+          <p class="text-xs text-gray-500">{{ selectedSeats.length }} seat(s) selected</p>
         </div>
 
         <!-- Right: total + confirm -->
         <div class="flex items-center gap-4 shrink-0">
           <div class="text-right">
             <p class="text-xs text-gray-500">Total</p>
-            <p class="text-xl font-black text-gold-400">
-              ₹{{ totalCost }}
-            </p>
+            <p class="text-xl font-black text-gold-400">₹{{ totalCost }}</p>
           </div>
           <button
             (click)="registerBooking()"
-            class="btn-gold px-6 py-3 rounded-xl text-sm font-bold">
+            [disabled]="isBooking"
+            [class.cursor-not-allowed]="isBooking"
+            [attr.title]="isBooking ? 'Processing your booking...' : 'Pay Now'"
+            class="btn-gold px-6 py-3 rounded-xl text-sm font-bold"
+          >
             Pay Now →
           </button>
         </div>
-
       </div>
     </div>
 
     <!-- Spacer so content isn't hidden behind sticky bar -->
     <div class="h-24"></div>
   }
-
 </div>

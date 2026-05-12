@@ -178,7 +178,11 @@
         </div>
 
         <!-- Submit Button -->
-        <button (click)="addShowtime()" class="btn-gold w-full py-3 rounded-lg">
+        <button
+          (click)="addShowtime()"
+          [disabled]="isAdding"
+          class="btn-gold w-full py-3 rounded-lg"
+        >
           ✓ Add Showtime
         </button>
       </div>
@@ -267,6 +271,9 @@
                 </button>
                 <button
                   (click)="openDeleteModal(showtime.showtimeId)"
+                  [disabled]="isDeleting"
+                  [class.cursor-not-allowed]="isDeleting"
+                  [attr.title]="isDeleting ? 'Delete in progress...' : 'Delete showtime'"
                   class="btn-ghost-red px-3 py-1.5 text-xs"
                 >
                   🗑 Del
@@ -381,7 +388,11 @@
               </div>
 
               <div class="flex justify-center">
-                <button (click)="saveEdit()" class="btn-gold flex-1 py-2.5 rounded-lg text-sm">
+                <button
+                  (click)="saveEdit()"
+                  [disabled]="isSaving"
+                  class="btn-gold flex-1 py-2.5 rounded-lg text-sm"
+                >
                   ✓ Save Changes
                 </button>
               </div>

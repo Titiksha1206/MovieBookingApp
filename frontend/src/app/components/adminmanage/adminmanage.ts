@@ -14,6 +14,9 @@ import { NotificationService } from '../../services/notification-service';
 export class Adminmanage implements OnInit {
   movieId: number = 0;
   movie: any = null;
+  isAdding: boolean = false;
+  isSaving: boolean = false;
+  isDeleting: boolean = false;
   showtimes: Showtime[] = [];
   showDeleteModal = false;
   selectedShowtimeId: number | null = null;
@@ -152,41 +155,47 @@ export class Adminmanage implements OnInit {
       })),
     };
 
+    this.isAdding = true;
+
     this.showtimeService.addShowtime(this.movieId, dto).subscribe({
       next: () => {
         this.notificationService.success('Showtime added successfully');
         this.loadShowtimes();
         this.resetForm();
+        this.isAdding = false;
       },
       error: (err) => {
-         // ✅ Extract error message properly
-      let errorMessage = 'Failed to add showtime';
-      
-      if (err.error) {
-        // Case 1: error.error is a string
-        if (typeof err.error === 'string') {
-          errorMessage = err.error;
+        // ✅ Extract error message properly
+        let errorMessage = 'Failed to add showtime';
+
+        if (err.error) {
+          // Case 1: error.error is a string
+          if (typeof err.error === 'string') {
+            errorMessage = err.error;
+          }
+          // Case 2: error.error has a message property
+          else if (err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error.error && err.error.error.message) {
+            errorMessage = err.error.error.message;
+          }
         }
-        // Case 2: error.error has a message property
-        else if (err.error.message) {
-          errorMessage = err.error.message;
-        } else if (err.error.error && err.error.error.message) {
-          errorMessage = err.error.error.message;
+        // Case 4: err.message exists
+        else if (err.message) {
+          errorMessage = err.message;
         }
-      }
-      // Case 4: err.message exists
-      else if (err.message) {
-        errorMessage = err.message;
-      }
-       if (err.status === 409) {
-        if (errorMessage.includes('Showtime already exists') || errorMessage.includes('duplicate')) {
-          errorMessage = 'A showtime with this theater, date, and time already exists.';
-        } else if (errorMessage.includes('booking')) {
-          errorMessage = 'Cannot modify showtime because it has existing bookings.';
+        if (err.status === 409) {
+          if (
+            errorMessage.includes('Showtime already exists') ||
+            errorMessage.includes('duplicate')
+          ) {
+            errorMessage = 'A showtime with this theater, date, and time already exists.';
+          } else if (errorMessage.includes('booking')) {
+            errorMessage = 'Cannot modify showtime because it has existing bookings.';
+          }
         }
-      }
-      
-      this.notificationService.error(errorMessage);
+        this.isAdding = false;
+        this.notificationService.error(errorMessage);
       },
     });
   }
@@ -279,12 +288,15 @@ export class Adminmanage implements OnInit {
       })),
     };
 
+    this.isSaving = true;
+
     this.showtimeService.updateShowtime(this.editingShowtimeId!, dto).subscribe({
       next: () => {
         this.notificationService.success('Showtime updated successfully');
         this.loadShowtimes();
         this.cdr.detectChanges();
         this.cancelEdit();
+        this.isSaving = false;
       },
       error: (err) => {
         // ✅ Properly extract error message
@@ -309,12 +321,14 @@ export class Adminmanage implements OnInit {
           }
         }
         this.notificationService.error(errorMessage);
+        this.isSaving = false;
       },
     });
   }
   // ── Delete Showtime ──
 
   openDeleteModal(id: number): void {
+    if (this.isDeleting) return;
     this.selectedShowtimeId = id;
     this.showDeleteModal = true;
   }
@@ -332,9 +346,12 @@ export class Adminmanage implements OnInit {
   }
 
   deleteShowtime(showtimeId: number): void {
+    this.isDeleting = true;
     this.showtimeService.deleteShowtime(showtimeId).subscribe({
       next: () => {
-        (this.loadShowtimes(), this.notificationService.success('Showtime deleted successfully'));
+        this.loadShowtimes();
+        this.notificationService.success('Showtime deleted successfully');
+        this.isDeleting = false;
       },
       error: (err) => {
         // ✅ Show proper error message for bookings
@@ -348,6 +365,7 @@ export class Adminmanage implements OnInit {
           const errorMsg = err.error?.message || err.message || 'Failed to delete showtime';
           this.notificationService.error(errorMsg);
         }
+        this.isDeleting = false;
       },
     });
   }
