@@ -1,7 +1,0 @@
-[build]
-  publish = "dist/angularnew/browser"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
