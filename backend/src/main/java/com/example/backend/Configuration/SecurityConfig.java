@@ -56,7 +56,7 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
  @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
+        configuration.setAllowedOriginPatterns(Arrays.asList(
             System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "http://localhost:4200,https://snematix-frontend.vercel.app").split(",")
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

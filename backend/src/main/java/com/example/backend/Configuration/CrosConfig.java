@@ -11,7 +11,7 @@ public class CrosConfig implements WebMvcConfigurer {
      @Override
     public void addCorsMappings(CorsRegistry registry) {
          registry.addMapping("/**")
-                  .allowedOrigins(System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "http://localhost:4200,https://snematix-frontend.vercel.app").split(","))
+                  .allowedOriginPatterns(System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "http://localhost:4200,https://snematix-frontend.vercel.app").split(","))
                   .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                   .allowedHeaders("*");
     }
