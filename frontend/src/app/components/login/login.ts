@@ -12,6 +12,7 @@ import { NotificationService } from '../../services/notification-service';
 })
 export class Login implements OnInit {
   errorMessage: string = '';
+  isLoggingIn: boolean = false; 
 
   constructor(
     private authService: AuthService,
@@ -22,7 +23,7 @@ export class Login implements OnInit {
   ngOnInit(): void {}
 
   login(form: NgForm): void {
-    if (form.invalid) {
+    if (form.invalid || this.isLoggingIn) {
       form.control.markAllAsTouched();
       return;
     }
@@ -39,6 +40,7 @@ export class Login implements OnInit {
     localStorage.removeItem('username');
 
     this.errorMessage = '';
+    this.isLoggingIn = true; 
 
     this.authService.loginUser(loginDto).subscribe({
       next: (data) => {
@@ -92,9 +94,10 @@ export class Login implements OnInit {
           }
         }
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage = 'Invalid username or password. Login Failed.';
         this.notificationService.error(this.errorMessage);
+        this.isLoggingIn = false;
       },
     });
   }
