@@ -33,7 +33,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/_redirects"
             ],
             "styles": ["src/styles.css"],
             "server": "src/main.server.ts",
