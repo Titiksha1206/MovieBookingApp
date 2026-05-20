@@ -32,7 +32,7 @@ export class Registration implements OnInit {
             Validators.pattern(/^[a-zA-Z0-9._]+$/),
           ],
         ],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)]],
         password: [
           '',
           [
@@ -44,7 +44,7 @@ export class Registration implements OnInit {
           ],
         ],
         confirmPassword: ['', Validators.required],
-        mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+        mobileNumber: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
         userRole: ['', Validators.required],
       },
       { validator: this.passwordMatchValidator },

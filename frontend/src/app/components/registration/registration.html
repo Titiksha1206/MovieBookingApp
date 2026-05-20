@@ -52,7 +52,7 @@
               @if (email.errors?.['required']) {
                 <span>Email is required</span>
               }
-              @if (email.errors?.['email']) {
+              @if (email.errors?.['pattern']) {
                 <span>Email is invalid</span>
               }
             </div>
@@ -126,7 +126,7 @@
                 <span>Mobile number is required</span>
               }
               @if (mobileNumber.errors?.['pattern']) {
-                <span>Must be exactly 10 digits</span>
+                <span>Must be a valid 10-digit mobile number (starting with 6, 7, 8, or 9)</span>
               }
             </div>
           }
